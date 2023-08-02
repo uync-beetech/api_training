@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: "update"
+  datasource:
+    url: "jdbc:mariadb://localhost:3306/api_db"
+    username: "root"
+    password: ""
+    driver-class-name: "org.mariadb.jdbc.Driver"
+  #spring.jpa.show-sql: true
+
+chat_app:
+  backend:
+    access:
+      secretKey: "955b46b40b5e48c9896db94aaf9fc0cb955b46b40b5e48c9896db94aaf9fc0cb955b46b40b5e48c9896db94aaf9fc0cb955b46b40b5e48c9896db94aaf9fc0c955b46b40b5e48c9896db94aaf9fc0cbb"
+      expirationMs: 86400000 # ~1days
+    refresh:
+      secretKey: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      expirationMs: 2592000000 #30 days
