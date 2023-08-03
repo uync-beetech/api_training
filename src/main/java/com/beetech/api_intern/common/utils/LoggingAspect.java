@@ -15,21 +15,21 @@ import org.springframework.stereotype.Component;
 public class LoggingAspect {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
 
-    @Before("execution(* com.chat_app.backend..*Controller.*(..))")
+    @Before("execution(* com.beetech.api_intern..*Controller.*(..))")
     public void logBefore(JoinPoint joinPoint) {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Received request: {}", joinPoint.getSignature());
         }
     }
 
-    @AfterThrowing(pointcut = "execution(* com.chat_app.backend..*Controller.*(..))", throwing = "ex")
+    @AfterThrowing(pointcut = "execution(* com.beetech.api_intern..*Controller.*(..))", throwing = "ex")
     public void logError(Exception ex) {
         if (LOGGER.isErrorEnabled()) {
             LOGGER.error("An error occurred: " + ex.getMessage(), ex);
         }
     }
 
-    @AfterReturning(pointcut = "execution(* com.chat_app.backend..*Controller.*(..))", returning = "result")
+    @AfterReturning(pointcut = "execution(* com.beetech.api_intern..*Controller.*(..))", returning = "result")
     public void logSuccess(Object result) {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Method executed successfully with result: {}", result);
