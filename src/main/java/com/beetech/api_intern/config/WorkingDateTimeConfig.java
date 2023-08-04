@@ -15,23 +15,39 @@ public class WorkingDateTimeConfig {
 
     @Value("${working.days}")
     private String days;
+    private List<DayOfWeek> dayOfWeeks = null;
 
     @Value("${working.time.start}")
     private String start;
+    private LocalTime startTime = null;
 
     @Value("${working.time.end}")
     private String end;
+    private LocalTime endTime = null;
 
     public List<DayOfWeek> getDaysOfWeek() {
-        return Arrays.stream(days.split(",")).map(DayOfWeek::valueOf).toList();
+        if (dayOfWeeks == null) {
+            dayOfWeeks = Arrays.stream(days.split(","))
+                    .map(DayOfWeek::valueOf)
+                    .toList();
+        }
+        return dayOfWeeks;
     }
 
 
     public LocalTime getStartTime() {
-        return LocalTime.parse(start);
+        if (startTime == null) {
+            StringBuilder sbStartTime = new StringBuilder(start);
+            startTime = LocalTime.parse(sbStartTime.insert(2, ':'));
+        }
+        return startTime;
     }
 
     public LocalTime getEndTime() {
-        return LocalTime.parse(end);
+        if (endTime == null) {
+            StringBuilder sbEndTime = new StringBuilder(end);
+            endTime = LocalTime.parse(sbEndTime.insert(2, ':'));
+        }
+        return endTime;
     }
 }
