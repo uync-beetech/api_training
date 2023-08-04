@@ -32,6 +32,7 @@ public class MaintenanceStatus implements Serializable {
     private boolean flag = false;
 
     @Column(name = "maintenance_time", nullable = false)
+    @Getter
     private LocalDateTime time;
 
     @Column(name = "remark", length = 300)
