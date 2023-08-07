@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 public class RefreshTokenService extends JwtService {
 
     public RefreshTokenService(
-            @Value("${chat_app.backend.refresh.secretKey}") String secretKey,
-            @Value("${chat_app.backend.refresh.expirationMs}") Long jwtExpirationMs
+            @Value("${api.refresh.secretKey}") String secretKey,
+            @Value("${api.refresh.expirationMs}") Long jwtExpirationMs
             ) {
         setSecretKey(secretKey);
         setJwtExpirationMs(jwtExpirationMs);

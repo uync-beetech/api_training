@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccessTokenService extends JwtService {
     public AccessTokenService(
-            @Value("${chat_app.backend.access.secretKey}") String secretKey,
-            @Value("${chat_app.backend.access.expirationMs}") Long jwtExpirationMs
+            @Value("${api.access.secretKey}") String secretKey,
+            @Value("${api.access.expirationMs}") Long jwtExpirationMs
     ) {
         setSecretKey(secretKey);
         setJwtExpirationMs(jwtExpirationMs);
