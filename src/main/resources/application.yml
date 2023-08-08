@@ -9,6 +9,17 @@ spring:
     password: ""
     driver-class-name: "org.mariadb.jdbc.Driver"
   #spring.jpa.show-sql: true
+  mail:
+    host: "sandbox.smtp.mailtrap.io"
+    port: 2525
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: true
+    username: 05ce9a5b54dc70
+    password: d0970a2a657f3c
 
 api:
   access:
@@ -18,9 +29,11 @@ api:
     secretKey: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     expirationMs: 2592000000 #30 days
 
+
+
 working:
   days: "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY"
   time:
-    start: "2000"
-    end: "0200"
+    start: "0800"
+    end: "1730"
 
