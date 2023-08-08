@@ -121,6 +121,7 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
         </dependency>
+
         <!--        junit and mockito-->
         <dependency>
             <groupId>junit</groupId>
@@ -132,6 +133,14 @@
             <artifactId>mockito-core</artifactId>
             <version>5.4.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+            <version>3.1.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
