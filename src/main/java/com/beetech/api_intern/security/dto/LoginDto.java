@@ -1,12 +1,12 @@
 package com.beetech.api_intern.security.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 
 /**
@@ -29,5 +29,9 @@ public class LoginDto {
      */
     @Size(min = 5, max = 50)
     @NotBlank
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,32}$",
+            message = "Password must be between 8 and 32 characters, including letters, numbers, and uppercase letters."
+    )
     private String password;
 }

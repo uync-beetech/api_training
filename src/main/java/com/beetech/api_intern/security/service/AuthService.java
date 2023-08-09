@@ -8,4 +8,5 @@ public interface AuthService {
 
     AuthenticationResponse refreshToken(String refreshToken);
 
+    void blockAllRefreshToken(Long userId);
 }
