@@ -11,4 +11,5 @@ public class EntityNotFoundException extends ResponseStatusException {
     public EntityNotFoundException(String message, Throwable cause) {
         super(HttpStatus.NOT_FOUND, message, cause);
     }
+
 }

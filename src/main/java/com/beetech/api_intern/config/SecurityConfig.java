@@ -1,6 +1,7 @@
 package com.beetech.api_intern.config;
 
 import com.beetech.api_intern.common.utils.CustomPasswordEncoder;
+import com.beetech.api_intern.features.role.RoleEnum;
 import com.beetech.api_intern.features.user.UserService;
 import com.beetech.api_intern.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -74,15 +75,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults());
-        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers("/api/v1/**"));
+        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.ignoringRequestMatchers("/api/**"));
+
+        http.authorizeHttpRequests(requestMatcherRegistry -> {
+            requestMatcherRegistry.requestMatchers("/api/request-password").permitAll();
+            requestMatcherRegistry.requestMatchers("/api/reset-password").permitAll();
+            requestMatcherRegistry.requestMatchers("/api/users").hasAuthority(RoleEnum.ADMIN.toString());
+        });
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**")
+                .requestMatchers("/api/auth/**")
                 .permitAll()
                 .and();
 
         http.authorizeHttpRequests()
-                .requestMatchers("/api/v1/**")
+                .requestMatchers("/api/**")
                 .authenticated().and();
 
         http.authorizeHttpRequests()

@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -75,6 +77,12 @@ public class AuthServiceImpl implements AuthService {
                 .accessToken(accessTokenService.generateToken(user))
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void blockAllRefreshToken(Long userId) {
+        refreshTokenRepository.blockAllByUser(userId);
     }
 
 }

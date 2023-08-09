@@ -6,19 +6,19 @@ import com.beetech.api_intern.security.dto.RefreshTokenDto;
 import com.beetech.api_intern.security.dto.RegisterDto;
 import com.beetech.api_intern.security.service.AuthService;
 import com.beetech.api_intern.features.user.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 
 /**
  * The type Auth controller.
  */
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Validated
 public class AuthController {
