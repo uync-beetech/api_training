@@ -32,8 +32,14 @@ public class User implements UserDetails, Serializable {
     private Long id;
 
     @Column(name = "login_id", unique = true)
-    @Getter
+    @Setter
     private String loginId;
+
+    @Column(name = "old_login_id")
+    @Builder.Default
+    @Setter
+    private String oldLoginId = null;
+
 
     @Column(name = "user_name", unique = true, length = 40)
     private String username;
@@ -45,11 +51,16 @@ public class User implements UserDetails, Serializable {
     @Column(name = "birth_day")
     private LocalDate birthDay;
 
+    @Getter
     @Column(name = "locked")
+    @Builder.Default
     private boolean locked = false;
 
-    @Column(name = "deleted")
-    private boolean deleted = false;
+    @Column(name = "deleted_flag")
+    @Builder.Default
+    @Setter
+    private int deleted = 0;
+
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
@@ -57,6 +68,8 @@ public class User implements UserDetails, Serializable {
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
+    @Setter
+    @Builder.Default
     private Collection<ChangePasswordToken> changePasswordTokens = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
@@ -65,17 +78,9 @@ public class User implements UserDetails, Serializable {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
-    @Getter
     @Setter
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
-
-    public void setChangePasswordTokens(Collection<ChangePasswordToken> changePasswordTokens) {
-        this.changePasswordTokens = changePasswordTokens;
-    }
-
-    public void setRefreshTokens(Collection<RefreshToken> refreshTokens) {
-        this.refreshTokens = refreshTokens;
-    }
 
     public void addRole(Role role) {
         if (roles == null) {

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -84,5 +83,15 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @PostMapping("delete-user")
+    public ResponseEntity<Object> deleteUser() {
+        User user = UserUtils.getAuthenticatedUser();
+        String email = user.getLoginId();
+        userService.deleteUser(user);
+        authService.blockAllRefreshToken(user.getId());
+        mailService.sendEmail(email, "Delete user successfully!", "Deleted");
+        return ResponseEntity.ok().build();
+    }
 }
 

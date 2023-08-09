@@ -13,6 +13,7 @@ import java.util.List;
 public interface UserService extends UserDetailsService {
     List<User> findUser(ListUserRequestDto dto);
     void register(RegisterDto registerDto);
+    void deleteUser(User user);
 
     @Override
     @Transactional

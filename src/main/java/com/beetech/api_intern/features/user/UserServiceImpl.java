@@ -58,6 +58,15 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void deleteUser(User user) {
+        user.setDeleted(9);
+        user.setOldLoginId(user.getLoginId());
+        user.setLoginId(null);
+        userRepository.save(user);
+    }
+
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
