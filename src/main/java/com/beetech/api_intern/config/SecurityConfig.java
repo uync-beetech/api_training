@@ -83,6 +83,11 @@ public class SecurityConfig {
             requestMatcherRegistry.requestMatchers("/api/users").hasAuthority(RoleEnum.ADMIN.toString());
         });
 
+        http.authorizeHttpRequests(requestMatcherRegistry -> {
+            requestMatcherRegistry.requestMatchers("/api/cities").permitAll();
+            requestMatcherRegistry.requestMatchers("/api/districts").permitAll();
+        });
+
         http.authorizeHttpRequests()
                 .requestMatchers("/api/auth/**")
                 .permitAll()
