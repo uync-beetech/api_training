@@ -15,24 +15,42 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * The type City service impl test.
+ */
 @ExtendWith(MockitoExtension.class)
 class CityServiceImplTest {
+    /**
+     * The City repository.
+     */
     @Mock
     CityRepository cityRepository;
 
+    /**
+     * The City service.
+     */
     @Mock
     CityService cityService;
 
+    /**
+     * Sets up.
+     */
     @BeforeEach
     void setUp() {
         cityRepository = mock(CityRepository.class);
         cityService = new CityServiceImpl(cityRepository);
     }
 
+    /**
+     * Tear down.
+     */
     @AfterEach
     void tearDown() {
     }
 
+    /**
+     * Find all has records in database should return list city.
+     */
     @Test
     void findAll_HasRecordsInDatabase_ShouldReturnListCity() {
         List<City> cities = new ArrayList<>();
@@ -47,6 +65,9 @@ class CityServiceImplTest {
         assertFalse(cityService.findAll().isEmpty());
     }
 
+    /**
+     * Find all has no records in database should return empty list.
+     */
     @Test
     void findAll_HasNoRecordsInDatabase_ShouldReturnEmptyList() {
         when(cityRepository.findAll()).thenAnswer(invocationOnMock -> new ArrayList<City>());

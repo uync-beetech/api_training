@@ -17,16 +17,31 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * The type District service impl test.
+ */
 @ExtendWith(MockitoExtension.class)
 class DistrictServiceImplTest {
+    /**
+     * The District repository.
+     */
     @Mock
     DistrictRepository districtRepository;
 
+    /**
+     * The District service.
+     */
     @Mock
     DistrictService districtService;
 
+    /**
+     * The Districts.
+     */
     List<District> districts;
 
+    /**
+     * Sets up.
+     */
     @BeforeEach
     void setUp() {
         districtRepository = mock(DistrictRepository.class);
@@ -41,10 +56,16 @@ class DistrictServiceImplTest {
         }
     }
 
+    /**
+     * Tear down.
+     */
     @AfterEach
     void tearDown() {
     }
 
+    /**
+     * Find all has records in database should return list district.
+     */
     @Test
     void findAll_HasRecordsInDatabase_ShouldReturnListDistrict() {
         when(districtRepository.findAllByCityId(any(Integer.class)))
@@ -52,6 +73,9 @@ class DistrictServiceImplTest {
         assertFalse(districtService.findAll(1).isEmpty());
     }
 
+    /**
+     * Find all has no records in database should return empty list.
+     */
     @Test
     void findAll_HasNoRecordsInDatabase_ShouldReturnEmptyList() {
         when(districtRepository.findAllByCityId(any(Integer.class)))
