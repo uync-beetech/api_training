@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 class PasswordGeneratorTest {
     @Test
     void testPasswordGenerator() {
-        System.out.println(RandomStringGenerator.getRandomString(15));
+        System.out.println(StringGenerator.getRandomString(15));
     }
 
 }

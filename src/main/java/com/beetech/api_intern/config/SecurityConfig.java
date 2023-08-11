@@ -83,6 +83,12 @@ public class SecurityConfig {
             requestMatcherRegistry.requestMatchers("/api/users").hasAuthority(RoleEnum.ADMIN.toString());
         });
 
+        // category
+        http.authorizeHttpRequests(requestMatcherRegistry -> {
+            requestMatcherRegistry.requestMatchers("/api/categories").permitAll();
+            requestMatcherRegistry.requestMatchers("/api/delete-category**").hasAuthority(RoleEnum.ADMIN.toString());
+        });
+
         http.authorizeHttpRequests()
                 .requestMatchers("/api/auth/**")
                 .permitAll()

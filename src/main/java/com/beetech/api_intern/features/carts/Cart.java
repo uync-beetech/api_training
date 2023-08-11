@@ -1,5 +1,7 @@
-package com.beetech.api_intern.features.maintenancestatus;
+package com.beetech.api_intern.features.carts;
 
+import com.beetech.api_intern.features.carts.cartdetails.CartDetail;
+import com.beetech.api_intern.features.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,14 +13,16 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
-
-@Builder
 @Entity
-@Table(name = "maintenance_status")
-@NoArgsConstructor
+@Table(name = "cart")
+@Getter
+@Builder
 @AllArgsConstructor
-public class MaintenanceStatus implements Serializable {
+@NoArgsConstructor
+public class Cart implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -27,22 +31,23 @@ public class MaintenanceStatus implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "maintenance_flag", columnDefinition = "BOOLEAN DEFAULT false")
-    @Getter
-    private boolean flag = false;
+    @Column(name = "token", length = 20, unique = true)
+    private String token;
 
-    @Column(name = "maintenance_time", nullable = false)
-    @Getter
-    private LocalDateTime time;
+    @Column(name = "user_note")
+    private String userNote;
 
-    @Column(name = "remark", length = 300)
-    private String remark;
+    @OneToMany(mappedBy = "cart")
+    @Builder.Default
+    private Set<CartDetail> cartDetails = new HashSet<>();
 
-    @Column(name = "created")
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @CreationTimestamp
     private LocalDateTime created;
 
-    @Column(name = "updated")
     @UpdateTimestamp
     private LocalDateTime updated;
 }

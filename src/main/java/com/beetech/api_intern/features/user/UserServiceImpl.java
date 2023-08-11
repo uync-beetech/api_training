@@ -5,7 +5,7 @@ import com.beetech.api_intern.common.exceptions.ConflictException;
 import com.beetech.api_intern.common.exceptions.EntityNotFoundException;
 import com.beetech.api_intern.common.utils.CustomPasswordEncoder;
 import com.beetech.api_intern.common.utils.DateTimeFormatterUtils;
-import com.beetech.api_intern.common.utils.RandomStringGenerator;
+import com.beetech.api_intern.common.utils.StringGenerator;
 import com.beetech.api_intern.features.changepasswordtoken.ChangePasswordToken;
 import com.beetech.api_intern.features.changepasswordtoken.ChangePasswordTokenRepository;
 import com.beetech.api_intern.features.role.RoleEnum;
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findUserByLoginId(email)
                 .orElseThrow(UserNotFoundException::getInstance);
 
-        String token = RandomStringGenerator.getRandomString(20);
+        String token = StringGenerator.getRandomString(20);
 
         ChangePasswordToken changePasswordToken = ChangePasswordToken
                 .builder()
@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public String resetPassword(User user) {
-        String newPassword = RandomStringGenerator.getRandomString(32);
+        String newPassword = StringGenerator.getRandomString(32);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         return newPassword;

@@ -1,5 +1,7 @@
-package com.beetech.api_intern.features.maintenancestatus;
+package com.beetech.api_intern.features.carts.cartdetails;
 
+import com.beetech.api_intern.features.carts.Cart;
+import com.beetech.api_intern.features.products.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,13 +14,13 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-
-@Builder
 @Entity
-@Table(name = "maintenance_status")
-@NoArgsConstructor
+@Table(name = "cart_detail")
+@Getter
+@Builder
 @AllArgsConstructor
-public class MaintenanceStatus implements Serializable {
+@NoArgsConstructor
+public class CartDetail implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -27,22 +29,26 @@ public class MaintenanceStatus implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "maintenance_flag", columnDefinition = "BOOLEAN DEFAULT false")
-    @Getter
-    private boolean flag = false;
+    @Column
+    private Integer quantity;
 
-    @Column(name = "maintenance_time", nullable = false)
-    @Getter
-    private LocalDateTime time;
+    @Column(name = "price")
+    private Double price;
 
-    @Column(name = "remark", length = 300)
-    private String remark;
+    @Column(name = "total_price")
+    private Double totalPrice;
 
-    @Column(name = "created")
+    @ManyToOne
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cart;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
     @CreationTimestamp
     private LocalDateTime created;
 
-    @Column(name = "updated")
     @UpdateTimestamp
     private LocalDateTime updated;
 }
