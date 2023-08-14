@@ -1,5 +1,6 @@
 package com.beetech.api_intern.features.user;
 
+import com.beetech.api_intern.features.carts.Cart;
 import com.beetech.api_intern.features.changepasswordtoken.ChangePasswordToken;
 import com.beetech.api_intern.features.role.Role;
 import com.beetech.api_intern.security.RefreshToken;
@@ -32,8 +33,14 @@ public class User implements UserDetails, Serializable {
     private Long id;
 
     @Column(name = "login_id", unique = true)
-    @Getter
+    @Setter
     private String loginId;
+
+    @Column(name = "old_login_id")
+    @Builder.Default
+    @Setter
+    private String oldLoginId = null;
+
 
     @Column(name = "user_name", unique = true, length = 40)
     private String username;
@@ -45,37 +52,39 @@ public class User implements UserDetails, Serializable {
     @Column(name = "birth_day")
     private LocalDate birthDay;
 
+    @Getter
     @Column(name = "locked")
+    @Builder.Default
     private boolean locked = false;
 
-    @Column(name = "deleted")
-    private boolean deleted = false;
+    @Column(name = "deleted_flag")
+    @Builder.Default
+    @Setter
+    private int deleted = 0;
+
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     private Collection<RefreshToken> refreshTokens = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
+
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
-    private Collection<ChangePasswordToken> changePasswordTokens = new ArrayList<>();
+    @Setter
+    @Builder.Default
+    private Set<ChangePasswordToken> changePasswordTokens = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
-    @Getter
     @Setter
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
-
-    public void setChangePasswordTokens(Collection<ChangePasswordToken> changePasswordTokens) {
-        this.changePasswordTokens = changePasswordTokens;
-    }
-
-    public void setRefreshTokens(Collection<RefreshToken> refreshTokens) {
-        this.refreshTokens = refreshTokens;
-    }
 
     public void addRole(Role role) {
         if (roles == null) {
