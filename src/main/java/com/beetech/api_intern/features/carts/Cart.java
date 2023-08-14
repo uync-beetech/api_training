@@ -3,10 +3,7 @@ package com.beetech.api_intern.features.carts;
 import com.beetech.api_intern.features.carts.cartdetails.CartDetail;
 import com.beetech.api_intern.features.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,6 +19,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Cart implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -32,17 +30,26 @@ public class Cart implements Serializable {
     private Long id;
 
     @Column(name = "token", length = 20, unique = true)
+    @Setter
     private String token;
 
     @Column(name = "user_note")
+    @Setter
     private String userNote;
 
-    @OneToMany(mappedBy = "cart")
+    @Column(name = "total_price")
     @Builder.Default
+    @Setter
+    private Double totalPrice = 0D;
+
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.REMOVE)
+    @Builder.Default
+    @ToString.Exclude
     private Set<CartDetail> cartDetails = new HashSet<>();
 
     @OneToOne
     @JoinColumn(name = "user_id")
+    @Setter
     private User user;
 
     @CreationTimestamp
@@ -50,4 +57,17 @@ public class Cart implements Serializable {
 
     @UpdateTimestamp
     private LocalDateTime updated;
+
+    public void addDetail(CartDetail cartDetail) {
+        cartDetails.add(cartDetail);
+        setTotalPrice(getTotalPrice() + cartDetail.getTotalPrice());
+    }
+
+    public void plusTotalPrice(Double price) {
+        setTotalPrice(getTotalPrice()+price);
+    }
+
+    public void minusTotalPrice(Double price) {
+        setTotalPrice(getTotalPrice()-price);
+    }
 }

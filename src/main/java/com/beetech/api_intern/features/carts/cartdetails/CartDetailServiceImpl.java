@@ -7,4 +7,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CartDetailServiceImpl implements CartDetailService {
     private final CartDetailRepository cartDetailRepository;
+
+    @Override
+    public Long getQuantityByCartId(Long cartId) {
+        return cartDetailRepository.getQuantityByCart(cartId);
+    }
 }

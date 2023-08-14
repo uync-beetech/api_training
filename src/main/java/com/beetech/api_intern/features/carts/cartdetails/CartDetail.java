@@ -3,10 +3,7 @@ package com.beetech.api_intern.features.carts.cartdetails;
 import com.beetech.api_intern.features.carts.Cart;
 import com.beetech.api_intern.features.products.Product;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -30,12 +27,14 @@ public class CartDetail implements Serializable {
     private Long id;
 
     @Column
-    private Integer quantity;
+    @Setter
+    private Long quantity;
 
     @Column(name = "price")
     private Double price;
 
     @Column(name = "total_price")
+    @Setter
     private Double totalPrice;
 
     @ManyToOne
@@ -51,4 +50,13 @@ public class CartDetail implements Serializable {
 
     @UpdateTimestamp
     private LocalDateTime updated;
+
+    public void updateTotalPrice() {
+        setTotalPrice(getQuantity() * getPrice());
+    }
+
+    public void updateQuantity(Long quantity) {
+        setQuantity(quantity);
+        setTotalPrice(quantity * getPrice());
+    }
 }
