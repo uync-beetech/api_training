@@ -9,8 +9,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -38,7 +38,7 @@ public class Product implements Serializable {
     @Column(name = "price")
     private Double price;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_image",
             joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
@@ -46,7 +46,7 @@ public class Product implements Serializable {
     )
     @Setter
     @Builder.Default
-    private Set<Image> images = new HashSet<>();
+    private List<Image> images = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime created;

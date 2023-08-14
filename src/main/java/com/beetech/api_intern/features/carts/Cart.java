@@ -10,7 +10,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -42,10 +44,10 @@ public class Cart implements Serializable {
     @Setter
     private Double totalPrice = 0D;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @Builder.Default
     @ToString.Exclude
-    private Set<CartDetail> cartDetails = new HashSet<>();
+    private List<CartDetail> cartDetails = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "user_id")

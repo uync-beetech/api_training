@@ -4,9 +4,8 @@ import com.beetech.api_intern.common.utils.StringGenerator;
 import com.beetech.api_intern.common.utils.UserUtils;
 import com.beetech.api_intern.features.carts.cartdetails.CartDetail;
 import com.beetech.api_intern.features.carts.cartdetails.CartDetailRepository;
-import com.beetech.api_intern.features.carts.dto.AddToCartDto;
-import com.beetech.api_intern.features.carts.dto.DeleteCartDto;
-import com.beetech.api_intern.features.carts.dto.UpdateCartDto;
+import com.beetech.api_intern.features.carts.cartdetails.CartDetailResponse;
+import com.beetech.api_intern.features.carts.dto.*;
 import com.beetech.api_intern.features.carts.exceptions.CartNotFoundException;
 import com.beetech.api_intern.features.products.Product;
 import com.beetech.api_intern.features.products.ProductRepository;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -132,6 +132,7 @@ public class CartServiceImpl implements CartService {
         return cart;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Cart updateCart(UpdateCartDto dto) {
         Cart cart = null;
@@ -165,6 +166,31 @@ public class CartServiceImpl implements CartService {
             }
         }
         return cart;
+    }
+
+    @Override
+    public FindCartInfoResponse findCartInfo(FindCartInfoDto dto) {
+        Optional<User> optionalUser = UserUtils.getAuthenticatedUser();
+        Cart cart;
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            cart = user.getCart();
+        } else if (dto.getToken() != null) {
+            cart = cartRepository.findByToken(dto.getToken()).orElseThrow(CartNotFoundException::getInstance);
+        } else {
+            throw CartNotFoundException.getInstance();
+        }
+
+        List<CartDetailResponse> details = cart.getCartDetails()
+                .stream()
+                .map(CartDetailResponse::new)
+                .toList();
+
+        return FindCartInfoResponse.builder()
+                .id(cart.getId())
+                .totalPrice(cart.getTotalPrice())
+                .details(details)
+                .build();
     }
 
 }
