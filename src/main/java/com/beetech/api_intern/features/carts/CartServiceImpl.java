@@ -129,6 +129,9 @@ public class CartServiceImpl implements CartService {
             }
         });
 
+        // update version no
+        cartRepository.updateVersionNo(userCart.getId());
+
         // delete temp cart
         cartRepository.delete(tokenCart);
 
@@ -148,6 +151,11 @@ public class CartServiceImpl implements CartService {
             if (optionalCartDetail.isPresent()) {
                 CartDetail cartDetail = optionalCartDetail.get();
                 cartRepository.updateTotalPriceById(cart.getTotalPrice() - cartDetail.getTotalPrice(), cart.getId());
+
+                // update version no
+                cartRepository.updateVersionNo(cart.getId());
+
+                // delete cart detail
                 cartDetailRepository.delete(cartDetail);
             }
         }
