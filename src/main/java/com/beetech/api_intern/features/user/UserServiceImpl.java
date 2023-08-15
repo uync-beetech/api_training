@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +39,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findUser(ListUserRequestDto dto) {
-        return userRepository.findAll();
+        LocalDate from = DateTimeFormatterUtils.convertBirthdayString(dto.getBirthDay().split("-")[0]);
+        LocalDate to = DateTimeFormatterUtils.convertBirthdayString(dto.getBirthDay().split("-")[1]);
+        return userRepository.findAllByBirthDayGreaterThanEqualAndBirthDayLessThanEqual(from, to);
     }
 
     @Override
@@ -55,6 +58,15 @@ public class UserServiceImpl implements UserService {
                 .birthDay(DateTimeFormatterUtils.convertBirthdayString(registerDto.getBirthday()))
                 .build();
         user.addRole(roleRepository.findRoleByName(RoleEnum.NORMAL));
+        userRepository.save(user);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void deleteUser(User user) {
+        user.setDeleted(9);
+        user.setOldLoginId(user.getLoginId());
+        user.setLoginId(null);
         userRepository.save(user);
     }
 

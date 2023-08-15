@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 public class ChangePasswordToken implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

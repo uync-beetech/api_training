@@ -86,5 +86,15 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    @PostMapping("delete-user")
+    public ResponseEntity<Object> deleteUser() {
+        User user = UserUtils.getAuthenticatedUser();
+        String email = user.getLoginId();
+        userService.deleteUser(user);
+        authService.blockAllRefreshToken(user.getId());
+        mailService.sendEmail(email, "Delete user successfully!", "Deleted");
+        return ResponseEntity.ok().build();
+    }
 }
 

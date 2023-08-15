@@ -74,6 +74,7 @@ public class User implements UserDetails, Serializable {
     @ToString.Exclude
     @Setter
     @Builder.Default
+
     private Set<ChangePasswordToken> changePasswordTokens = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
