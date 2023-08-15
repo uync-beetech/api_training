@@ -56,17 +56,15 @@ public class CartServiceImpl implements CartService {
             User user = userRepository.findById(optionalUser.get().getId()).orElseThrow(UserNotFoundException::getInstance);
             cart = user.getCart();
             if (cart == null) {
-                cart = Cart.builder().user(user).userNote(dto.getUserNote()).build();
+                cart = Cart.builder().user(user).build();
                 cartRepository.save(cart);
             }
         } else if (dto.getToken() == null) {
-            cart = Cart.builder().token(StringGenerator.getRandom20Chars()).userNote(dto.getUserNote()).build();
+            cart = Cart.builder().token(StringGenerator.getRandom20Chars()).build();
             cartRepository.save(cart);
         } else {
             cart = cartRepository.findByToken(dto.getToken()).orElseThrow(CartNotFoundException::getInstance);
         }
-
-        cart.setUserNote(dto.getUserNote());
 
         Product product = productRepository.findById(dto.getProductId()).orElseThrow(ProductNotFoundException::getInstance);
         Optional<CartDetail> optionalCartDetail = cartDetailRepository.findByCartIdAndProductId(cart.getId(), dto.getProductId());
@@ -81,6 +79,7 @@ public class CartServiceImpl implements CartService {
         }
 
         cart.addDetail(cartDetail);
+        cart.plusOne();
         cartRepository.save(cart);
 
         return cart;
