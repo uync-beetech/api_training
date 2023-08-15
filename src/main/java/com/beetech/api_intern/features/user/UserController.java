@@ -89,7 +89,7 @@ public class UserController {
     @Transactional(propagation = Propagation.REQUIRED)
     @PostMapping("delete-user")
     public ResponseEntity<Object> deleteUser() {
-        User user = UserUtils.getAuthenticatedUser();
+        User user = UserUtils.getUser();
         String email = user.getLoginId();
         userService.deleteUser(user);
         authService.blockAllRefreshToken(user.getId());
