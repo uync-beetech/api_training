@@ -85,6 +85,7 @@ public class CartServiceImpl implements CartService {
         return cart;
     }
 
+
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Cart syncCart(String token) {
@@ -99,14 +100,34 @@ public class CartServiceImpl implements CartService {
         if (userCart == null) {
             tokenCart.setToken(null);
             tokenCart.setUser(user);
+            tokenCart.plusOne();
             cartRepository.save(tokenCart);
             return tokenCart;
         }
 
-        tokenCart.getCartDetails().forEach(userCart::addDetail);
+        var tokenCartDetails = tokenCart.getCartDetails();
 
-        // update user cart
-        cartRepository.save(userCart);
+        // foreach in token cart detail
+        tokenCartDetails.forEach(tokenCartDetail -> {
+            Long productId = tokenCartDetail.getProduct().getId();
+            // check if exist user cart detail contain this product
+            Optional<CartDetail> optionalCartDetail = cartDetailRepository.findByCartIdAndProductId(userCart.getId(), productId);
+            if (optionalCartDetail.isPresent()) {
+                CartDetail userCartDetail = optionalCartDetail.get();
+                userCartDetail.updateQuantity(userCartDetail.getQuantity() + tokenCartDetail.getQuantity());
+                cartDetailRepository.save(userCartDetail);
+            } else {
+                tokenCartDetail.setCart(userCart);
+                CartDetail cartDetail = CartDetail.builder()
+                        .cart(userCart)
+                        .product(tokenCartDetail.getProduct())
+                        .quantity(tokenCartDetail.getQuantity())
+                        .build();
+                cartDetailRepository.save(cartDetail);
+                userCart.addDetail(cartDetail);
+                cartRepository.save(userCart);
+            }
+        });
 
         // delete temp cart
         cartRepository.delete(tokenCart);

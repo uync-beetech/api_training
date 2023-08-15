@@ -1,6 +1,7 @@
 package com.beetech.api_intern.features.carts;
 
 import com.beetech.api_intern.features.carts.cartdetails.CartDetail;
+import com.beetech.api_intern.features.products.Product;
 import com.beetech.api_intern.features.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,6 +13,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Cart Entity

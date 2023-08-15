@@ -24,6 +24,7 @@ public class CartDetail implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @Setter
     private Long id;
 
     @Column
@@ -39,6 +40,7 @@ public class CartDetail implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
+    @Setter
     private Cart cart;
 
     @ManyToOne
@@ -50,6 +52,12 @@ public class CartDetail implements Serializable {
 
     @UpdateTimestamp
     private LocalDateTime updated;
+
+    @PrePersist
+    public void calculateTotalPrice() {
+        price = product.getPrice();
+        totalPrice = price * quantity;
+    }
 
     public void updateTotalPrice() {
         setTotalPrice(getQuantity() * getPrice());
