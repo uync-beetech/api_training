@@ -1,5 +1,6 @@
 package com.beetech.api_intern.features.carts;
 
+import com.beetech.api_intern.features.carts.cartdetails.CartDetailResponse;
 import com.beetech.api_intern.features.carts.cartdetails.CartDetailService;
 import com.beetech.api_intern.features.carts.dto.*;
 import jakarta.validation.Valid;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
@@ -59,6 +62,7 @@ public class CartController {
     }
 
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @PostMapping("update-cart")
     public ResponseEntity<UpdateCartResponse> updateCart(@Valid @RequestBody UpdateCartDto dto) {
         UpdateCartResponse data = new UpdateCartResponse(0L);
@@ -67,5 +71,18 @@ public class CartController {
             data.setTotalQuantity(cartDetailService.getQuantityByCartId(updatedCart.getId()));
         }
         return ResponseEntity.ok(data);
+    }
+
+    @PostMapping("cart-info")
+    public ResponseEntity<FindCartInfoResponse> findCartInfo(@Valid @RequestBody FindCartInfoDto dto) {
+        var data = cartService.findCartInfo(dto);
+
+        return ResponseEntity.ok(data);
+    }
+
+    @PostMapping("cart-quantity")
+    public ResponseEntity<FindTotalQuantityResponse> findTotalQuantity(@Valid @RequestBody FindTotalQuantityDto dto) {
+        Long totalQuantity = cartService.findTotalQuantity(dto.getToken());
+        return ResponseEntity.ok(new FindTotalQuantityResponse(totalQuantity));
     }
 }

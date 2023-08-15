@@ -100,6 +100,12 @@ public class SecurityConfig {
 
             // update cart
             requestMatcherRegistry.requestMatchers("/api/update-cart").permitAll();
+
+            // cart info
+            requestMatcherRegistry.requestMatchers("/api/cart-info").permitAll();
+
+            // get total quantity
+            requestMatcherRegistry.requestMatchers("/api/cart-quantity").permitAll();
         });
 
         http.authorizeHttpRequests()

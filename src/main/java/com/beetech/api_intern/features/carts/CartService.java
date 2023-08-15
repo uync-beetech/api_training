@@ -1,8 +1,6 @@
 package com.beetech.api_intern.features.carts;
 
-import com.beetech.api_intern.features.carts.dto.AddToCartDto;
-import com.beetech.api_intern.features.carts.dto.DeleteCartDto;
-import com.beetech.api_intern.features.carts.dto.UpdateCartDto;
+import com.beetech.api_intern.features.carts.dto.*;
 
 public interface CartService {
     Cart addToCart(AddToCartDto dto);
@@ -12,4 +10,6 @@ public interface CartService {
     Cart deleteCart(DeleteCartDto dto);
 
     Cart updateCart(UpdateCartDto dto);
+    FindCartInfoResponse findCartInfo(FindCartInfoDto dto);
+    Long findTotalQuantity(String token);
 }
