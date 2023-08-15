@@ -32,7 +32,7 @@ public class UserDataLoader implements CommandLineRunner {
             User user = User.builder()
                     .loginId("admin@gmail.com")
                     .username(username)
-                    .password(passwordEncoder.encode("admin"))
+                    .password(passwordEncoder.encode("Admin123"))
                     .build();
             user.addRole(this.roleRepository.findRoleByName(RoleEnum.ADMIN));
             user.addRole(this.roleRepository.findRoleByName(RoleEnum.NORMAL));

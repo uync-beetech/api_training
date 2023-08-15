@@ -1,5 +1,6 @@
 package com.beetech.api_intern.features.user;
 
+import com.beetech.api_intern.features.carts.Cart;
 import com.beetech.api_intern.features.changepasswordtoken.ChangePasswordToken;
 import com.beetech.api_intern.features.role.Role;
 import com.beetech.api_intern.security.RefreshToken;
@@ -66,13 +67,17 @@ public class User implements UserDetails, Serializable {
     @ToString.Exclude
     private Collection<RefreshToken> refreshTokens = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
+
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     @Setter
     @Builder.Default
-    private Collection<ChangePasswordToken> changePasswordTokens = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private Set<ChangePasswordToken> changePasswordTokens = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
