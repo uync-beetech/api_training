@@ -81,6 +81,31 @@ public class SecurityConfig {
             requestMatcherRegistry.requestMatchers("/api/request-password").permitAll();
             requestMatcherRegistry.requestMatchers("/api/reset-password").permitAll();
             requestMatcherRegistry.requestMatchers("/api/users").hasAuthority(RoleEnum.ADMIN.toString());
+            requestMatcherRegistry.requestMatchers("/api/change-password").authenticated();
+        });
+
+        // category
+        http.authorizeHttpRequests(requestMatcherRegistry -> {
+            requestMatcherRegistry.requestMatchers("/api/categories").permitAll();
+            requestMatcherRegistry.requestMatchers("/api/delete-category**").hasAuthority(RoleEnum.ADMIN.toString());
+        });
+
+        // cart
+        http.authorizeHttpRequests(requestMatcherRegistry -> {
+            // add to cart request
+            requestMatcherRegistry.requestMatchers("/api/add-cart").permitAll();
+
+            // delete cart
+            requestMatcherRegistry.requestMatchers("/api/delete-cart").permitAll();
+
+            // update cart
+            requestMatcherRegistry.requestMatchers("/api/update-cart").permitAll();
+
+            // cart info
+            requestMatcherRegistry.requestMatchers("/api/cart-info").permitAll();
+
+            // get total quantity
+            requestMatcherRegistry.requestMatchers("/api/cart-quantity").permitAll();
         });
 
         http.authorizeHttpRequests(requestMatcherRegistry -> {

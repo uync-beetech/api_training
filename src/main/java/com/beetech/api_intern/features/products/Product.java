@@ -1,4 +1,4 @@
-package com.beetech.api_intern.features.categories;
+package com.beetech.api_intern.features.products;
 
 import com.beetech.api_intern.features.images.Image;
 import jakarta.persistence.*;
@@ -9,44 +9,48 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-@Builder
 @Entity
+@Table(name = "product")
 @Getter
-@Table(name = "category")
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-public class Category implements Serializable {
+@NoArgsConstructor
+public class Product implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "name")
-    @Getter
     private String name;
 
+    @Column(name = "sku")
+    private String sku;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Column(name = "detail_info")
+    private String detailInfo;
+
+    @Column(name = "price")
+    private Double price;
+
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "category_image",
-            joinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"),
+            name = "product_image",
+            joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "image_id", referencedColumnName = "id")
     )
     @Setter
     @Builder.Default
-    private Set<Image> images = new HashSet<>();
+    private List<Image> images = new ArrayList<>();
 
     @CreationTimestamp
-    @Getter
     private LocalDateTime created;
 
     @UpdateTimestamp
-    @Getter
     private LocalDateTime updated;
 }

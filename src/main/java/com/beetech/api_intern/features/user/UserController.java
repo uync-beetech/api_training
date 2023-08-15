@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The type User controller.
@@ -37,7 +38,9 @@ public class UserController {
      */
     @PostMapping("change-password")
     public ResponseEntity<Object> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
-        userService.changePassword(UserUtils.getAuthenticatedUser().getId(), changePasswordDto);
+        Optional<User> optionalUser = UserUtils.getAuthenticatedUser();
+        assert optionalUser.isPresent();
+        userService.changePassword(optionalUser.get().getId(), changePasswordDto);
         return ResponseEntity.ok().build();
     }
 
