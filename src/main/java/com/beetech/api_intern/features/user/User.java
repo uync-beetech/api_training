@@ -12,10 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Entity
@@ -74,7 +71,6 @@ public class User implements UserDetails, Serializable {
     @ToString.Exclude
     @Setter
     @Builder.Default
-
     private Set<ChangePasswordToken> changePasswordTokens = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)

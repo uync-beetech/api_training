@@ -108,6 +108,11 @@ public class SecurityConfig {
             requestMatcherRegistry.requestMatchers("/api/cart-quantity").permitAll();
         });
 
+        http.authorizeHttpRequests(requestMatcherRegistry -> {
+            requestMatcherRegistry.requestMatchers("/api/cities").permitAll();
+            requestMatcherRegistry.requestMatchers("/api/districts").permitAll();
+        });
+
         http.authorizeHttpRequests()
                 .requestMatchers("/api/auth/**")
                 .permitAll()
