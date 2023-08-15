@@ -103,6 +103,9 @@ public class SecurityConfig {
 
             // cart info
             requestMatcherRegistry.requestMatchers("/api/cart-info").permitAll();
+
+            // get total quantity
+            requestMatcherRegistry.requestMatchers("/api/cart-quantity").permitAll();
         });
 
         http.authorizeHttpRequests()

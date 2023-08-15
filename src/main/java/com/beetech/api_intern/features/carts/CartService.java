@@ -11,4 +11,5 @@ public interface CartService {
 
     Cart updateCart(UpdateCartDto dto);
     FindCartInfoResponse findCartInfo(FindCartInfoDto dto);
+    Long findTotalQuantity(String token);
 }
