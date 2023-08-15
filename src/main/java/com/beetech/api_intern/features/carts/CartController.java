@@ -82,7 +82,7 @@ public class CartController {
 
     @PostMapping("cart-quantity")
     public ResponseEntity<FindTotalQuantityResponse> findTotalQuantity(@Valid @RequestBody FindTotalQuantityDto dto) {
-        Long totalQuantity = cartService.findTotalQuantity(dto.getToken());
-        return ResponseEntity.ok(new FindTotalQuantityResponse(totalQuantity));
+        var data = cartService.findTotalQuantity(dto.getToken());
+        return ResponseEntity.ok(data);
     }
 }

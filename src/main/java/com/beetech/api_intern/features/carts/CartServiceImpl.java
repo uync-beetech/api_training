@@ -190,14 +190,20 @@ public class CartServiceImpl implements CartService {
 
         List<CartDetailResponse> details = cart.getCartDetails().stream().map(CartDetailResponse::new).toList();
 
-        return FindCartInfoResponse.builder().id(cart.getId()).totalPrice(cart.getTotalPrice()).details(details).build();
+        return FindCartInfoResponse.builder()
+                .id(cart.getId())
+                .totalPrice(cart.getTotalPrice())
+                .versionNo(cart.getVersionNo())
+                .details(details)
+                .build();
     }
 
     @Override
-    public Long findTotalQuantity(String token) {
+    public FindTotalQuantityResponse findTotalQuantity(String token) {
         Cart cart = findCartByUserOrToken(token)
                 .orElseThrow(CartNotFoundException::getInstance);
-        return cartDetailRepository.getQuantityByCart(cart.getId());
+        Long totalQuantity = cartDetailRepository.getQuantityByCart(cart.getId());
+        return new FindTotalQuantityResponse(totalQuantity, cart.getVersionNo());
     }
 
 }
