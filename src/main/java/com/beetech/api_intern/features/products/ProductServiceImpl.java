@@ -21,6 +21,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findOne(String sku) {
-        return productRepository.findBySku(sku).orElseThrow(ProductNotFoundException::getInstance);
+        return productRepository.findBySkuAndDeletedIsFalse(sku).orElseThrow(ProductNotFoundException::getInstance);
     }
 }

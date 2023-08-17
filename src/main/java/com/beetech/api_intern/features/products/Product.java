@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "product")
@@ -39,6 +40,10 @@ public class Product implements Serializable {
     @Column(name = "price")
     private Double price;
 
+    @Column(name = "delete_flag", columnDefinition = "TINYINT(3) Default 0")
+    @Builder.Default
+    private boolean deleted = false;
+
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_image",
@@ -60,7 +65,7 @@ public class Product implements Serializable {
     @UpdateTimestamp
     private LocalDateTime updated;
 
-    public Image getThumbnailImage() {
-        return getImages().stream().filter(Image::isThumbnail).findFirst().orElseThrow();
+    public Optional<Image> getThumbnailImage() {
+        return getImages().stream().filter(Image::isThumbnail).findFirst();
     }
 }

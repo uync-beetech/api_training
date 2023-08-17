@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Optional;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,9 +27,12 @@ public class OrderDetailDto {
         Product product = orderDetail.getProduct();
         setProductId(product.getId());
         setProductName(product.getName());
-        Image thumbnail = product.getThumbnailImage();
-        setImagePath(thumbnail.getPath());
-        setImageName(thumbnail.getName());
+        Optional<Image> optionalImage = product.getThumbnailImage();
+        if (optionalImage.isPresent()) {
+            Image image = optionalImage.get();
+            setImagePath(image.getPath());
+            setImageName(image.getName());
+        }
         setQuantity(orderDetail.getQuantity());
         setPrice(orderDetail.getPrice());
         setTotalPrice(orderDetail.getTotalPrice());

@@ -27,7 +27,7 @@ public class ProductController {
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
         Page<Product> productPage = productService.findAll(dto, size, page);
-        List<ProductDto> products = productPage.getContent().stream().map(product -> modelMapper.map(product, ProductDto.class)).toList();
+        List<ProductDto> products = productPage.getContent().stream().map(ProductDto::new).toList();
         var data = FindAllResponse.builder()
                 .products(products)
                 .pageNumber(productPage.getNumber())
