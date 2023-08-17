@@ -53,8 +53,4 @@ public class Product implements Serializable {
 
     @UpdateTimestamp
     private LocalDateTime updated;
-
-    public Image getThumbnailImage() {
-        return getImages().stream().filter(Image::isThumbnail).findFirst().orElseThrow();
-    }
 }
