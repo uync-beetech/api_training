@@ -72,6 +72,7 @@ public class CartServiceImpl implements CartService {
         if (optionalCartDetail.isPresent()) {
             cartDetail = optionalCartDetail.get();
             cartDetail.updateQuantity(cartDetail.getQuantity() + dto.getQuantity());
+            cart.plusOne();
             cartDetailRepository.save(cartDetail);
         } else {
             cartDetail = CartDetail.builder().cart(cart).product(product).quantity(dto.getQuantity()).price(product.getPrice()).totalPrice(product.getPrice() * dto.getQuantity()).build();
@@ -79,7 +80,6 @@ public class CartServiceImpl implements CartService {
         }
 
         cart.addDetail(cartDetail);
-        cart.plusOne();
         cartRepository.save(cart);
 
         return cart;

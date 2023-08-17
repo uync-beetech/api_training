@@ -35,6 +35,10 @@ public class Image implements Serializable {
     @Getter
     private String name;
 
+    @Column(name = "thumbnail_flag", columnDefinition = "TINYINT default 1")
+    @Builder.Default
+    private boolean thumbnail = false;
+
     @CreationTimestamp
     @Getter
     private LocalDateTime created;

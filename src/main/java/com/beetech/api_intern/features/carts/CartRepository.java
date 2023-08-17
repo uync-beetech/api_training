@@ -18,4 +18,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     @Modifying
     @Query("UPDATE Cart c set c.versionNo = c.versionNo + 1 where c.id = :cartId")
     void updateVersionNo(Long cartId);
+
+    Optional<Cart> findByUserIdAndVersionNo(Long userId, Long versionNo);
 }
