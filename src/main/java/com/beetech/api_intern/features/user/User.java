@@ -2,7 +2,9 @@ package com.beetech.api_intern.features.user;
 
 import com.beetech.api_intern.features.carts.Cart;
 import com.beetech.api_intern.features.changepasswordtoken.ChangePasswordToken;
+import com.beetech.api_intern.features.orders.Order;
 import com.beetech.api_intern.features.role.Role;
+import com.beetech.api_intern.features.role.RoleEnum;
 import com.beetech.api_intern.security.RefreshToken;
 import jakarta.persistence.*;
 import lombok.*;
@@ -83,11 +85,21 @@ public class User implements UserDetails, Serializable {
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
+    @Setter
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
+
     public void addRole(Role role) {
         if (roles == null) {
             roles = new HashSet<>();
         }
         roles.add(role);
+    }
+
+    public boolean isAdmin() {
+        Optional<Role> admin = getRoles().stream().filter(role -> role.getName().equals(RoleEnum.ADMIN)).findFirst();
+        return admin.isPresent();
     }
 
     @Override

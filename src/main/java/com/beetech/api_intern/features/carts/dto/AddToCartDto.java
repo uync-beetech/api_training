@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddToCartDto {
     private String token;
-    private String userNote;
     private Long productId;
     private Long quantity;
 }
