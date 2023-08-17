@@ -11,6 +11,8 @@ import com.beetech.api_intern.features.district.District;
 import com.beetech.api_intern.features.district.DistrictRepository;
 import com.beetech.api_intern.features.orders.dto.CreateOrderDto;
 import com.beetech.api_intern.features.orders.dto.FindAllOrderDto;
+import com.beetech.api_intern.features.orders.dto.UpdateOrderDto;
+import com.beetech.api_intern.features.orders.exceptions.OrderNotFoundException;
 import com.beetech.api_intern.features.orders.orderdetail.OrderDetail;
 import com.beetech.api_intern.features.orders.orderdetail.OrderDetailRepository;
 import com.beetech.api_intern.features.orders.ordershippingdetail.OrderShippingDetail;
@@ -105,5 +107,24 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
 
         return order;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateOrder(UpdateOrderDto dto) {
+        User user = UserUtils.getUser();
+        Order order;
+        if (user.isAdmin()) {
+            if (dto.getId() == null) {
+                throw new BadRequestException("id must be not null");
+            }
+            order = orderRepository.findByIdAndDisplayId(dto.getId(), dto.getDisplayId())
+                    .orElseThrow(OrderNotFoundException::getInstance);
+        } else {
+            order = orderRepository.findByUserIdAndDisplayId(user.getId(), dto.getDisplayId())
+                    .orElseThrow(OrderNotFoundException::getInstance);
+        }
+        order.setStatus(dto.getStatus());
+        orderRepository.save(order);
     }
 }

@@ -36,6 +36,8 @@ public class Order implements Serializable {
     private String displayId;
 
     @Column(name = "status")
+    @Setter
+    @Builder.Default
     private Integer status = 1;
 
     @Column(name = "order_date")
@@ -55,6 +57,7 @@ public class Order implements Serializable {
 
     @OneToMany(mappedBy = "order")
     @ToString.Exclude
+    @Builder.Default
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
     @CreationTimestamp
