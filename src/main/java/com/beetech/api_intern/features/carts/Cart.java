@@ -1,6 +1,7 @@
 package com.beetech.api_intern.features.carts;
 
 import com.beetech.api_intern.features.carts.cartdetails.CartDetail;
+import com.beetech.api_intern.features.products.Product;
 import com.beetech.api_intern.features.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,10 +12,13 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+/**
+ * Cart Entity
+ */
 @Entity
 @Table(name = "cart")
 @Getter
@@ -35,14 +39,15 @@ public class Cart implements Serializable {
     @Setter
     private String token;
 
-    @Column(name = "user_note")
-    @Setter
-    private String userNote;
-
     @Column(name = "total_price")
     @Builder.Default
     @Setter
     private Double totalPrice = 0D;
+
+    @Column(name = "version_no", columnDefinition = "BIGINT Default 1")
+    @Builder.Default
+    @Setter
+    private Long versionNo = 1L;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @Builder.Default
@@ -60,16 +65,35 @@ public class Cart implements Serializable {
     @UpdateTimestamp
     private LocalDateTime updated;
 
+    /**
+     * Add detail.
+     *
+     * @param cartDetail the cart detail
+     */
     public void addDetail(CartDetail cartDetail) {
         cartDetails.add(cartDetail);
         setTotalPrice(getTotalPrice() + cartDetail.getTotalPrice());
     }
 
+    /**
+     * Plus total price.
+     *
+     * @param price the price
+     */
     public void plusTotalPrice(Double price) {
-        setTotalPrice(getTotalPrice()+price);
+        setTotalPrice(getTotalPrice() + price);
     }
 
+    /**
+     * Minus total price.
+     *
+     * @param price the price
+     */
     public void minusTotalPrice(Double price) {
-        setTotalPrice(getTotalPrice()-price);
+        setTotalPrice(getTotalPrice() - price);
+    }
+
+    public void plusOne() {
+        setVersionNo(getVersionNo() + 1);
     }
 }

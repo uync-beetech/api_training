@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class FindTotalQuantityResponse {
     private Long totalQuantity;
+    private Long versionNo;
 }

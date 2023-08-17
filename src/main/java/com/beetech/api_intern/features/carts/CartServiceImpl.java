@@ -56,17 +56,15 @@ public class CartServiceImpl implements CartService {
             User user = userRepository.findById(optionalUser.get().getId()).orElseThrow(UserNotFoundException::getInstance);
             cart = user.getCart();
             if (cart == null) {
-                cart = Cart.builder().user(user).userNote(dto.getUserNote()).build();
+                cart = Cart.builder().user(user).build();
                 cartRepository.save(cart);
             }
         } else if (dto.getToken() == null) {
-            cart = Cart.builder().token(StringGenerator.getRandom20Chars()).userNote(dto.getUserNote()).build();
+            cart = Cart.builder().token(StringGenerator.getRandom20Chars()).build();
             cartRepository.save(cart);
         } else {
             cart = cartRepository.findByToken(dto.getToken()).orElseThrow(CartNotFoundException::getInstance);
         }
-
-        cart.setUserNote(dto.getUserNote());
 
         Product product = productRepository.findById(dto.getProductId()).orElseThrow(ProductNotFoundException::getInstance);
         Optional<CartDetail> optionalCartDetail = cartDetailRepository.findByCartIdAndProductId(cart.getId(), dto.getProductId());
@@ -74,6 +72,7 @@ public class CartServiceImpl implements CartService {
         if (optionalCartDetail.isPresent()) {
             cartDetail = optionalCartDetail.get();
             cartDetail.updateQuantity(cartDetail.getQuantity() + dto.getQuantity());
+            cart.plusOne();
             cartDetailRepository.save(cartDetail);
         } else {
             cartDetail = CartDetail.builder().cart(cart).product(product).quantity(dto.getQuantity()).price(product.getPrice()).totalPrice(product.getPrice() * dto.getQuantity()).build();
@@ -85,6 +84,7 @@ public class CartServiceImpl implements CartService {
 
         return cart;
     }
+
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
@@ -100,14 +100,37 @@ public class CartServiceImpl implements CartService {
         if (userCart == null) {
             tokenCart.setToken(null);
             tokenCart.setUser(user);
+            tokenCart.plusOne();
             cartRepository.save(tokenCart);
             return tokenCart;
         }
 
-        tokenCart.getCartDetails().forEach(userCart::addDetail);
+        var tokenCartDetails = tokenCart.getCartDetails();
 
-        // update user cart
-        cartRepository.save(userCart);
+        // foreach in token cart detail
+        tokenCartDetails.forEach(tokenCartDetail -> {
+            Long productId = tokenCartDetail.getProduct().getId();
+            // check if exist user cart detail contain this product
+            Optional<CartDetail> optionalCartDetail = cartDetailRepository.findByCartIdAndProductId(userCart.getId(), productId);
+            if (optionalCartDetail.isPresent()) {
+                CartDetail userCartDetail = optionalCartDetail.get();
+                userCartDetail.updateQuantity(userCartDetail.getQuantity() + tokenCartDetail.getQuantity());
+                cartDetailRepository.save(userCartDetail);
+            } else {
+                tokenCartDetail.setCart(userCart);
+                CartDetail cartDetail = CartDetail.builder()
+                        .cart(userCart)
+                        .product(tokenCartDetail.getProduct())
+                        .quantity(tokenCartDetail.getQuantity())
+                        .build();
+                cartDetailRepository.save(cartDetail);
+                userCart.addDetail(cartDetail);
+                cartRepository.save(userCart);
+            }
+        });
+
+        // update version no
+        cartRepository.updateVersionNo(userCart.getId());
 
         // delete temp cart
         cartRepository.delete(tokenCart);
@@ -128,6 +151,11 @@ public class CartServiceImpl implements CartService {
             if (optionalCartDetail.isPresent()) {
                 CartDetail cartDetail = optionalCartDetail.get();
                 cartRepository.updateTotalPriceById(cart.getTotalPrice() - cartDetail.getTotalPrice(), cart.getId());
+
+                // update version no
+                cartRepository.updateVersionNo(cart.getId());
+
+                // delete cart detail
                 cartDetailRepository.delete(cartDetail);
             }
         }
@@ -162,14 +190,20 @@ public class CartServiceImpl implements CartService {
 
         List<CartDetailResponse> details = cart.getCartDetails().stream().map(CartDetailResponse::new).toList();
 
-        return FindCartInfoResponse.builder().id(cart.getId()).totalPrice(cart.getTotalPrice()).details(details).build();
+        return FindCartInfoResponse.builder()
+                .id(cart.getId())
+                .totalPrice(cart.getTotalPrice())
+                .versionNo(cart.getVersionNo())
+                .details(details)
+                .build();
     }
 
     @Override
-    public Long findTotalQuantity(String token) {
+    public FindTotalQuantityResponse findTotalQuantity(String token) {
         Cart cart = findCartByUserOrToken(token)
                 .orElseThrow(CartNotFoundException::getInstance);
-        return cartDetailRepository.getQuantityByCart(cart.getId());
+        Long totalQuantity = cartDetailRepository.getQuantityByCart(cart.getId());
+        return new FindTotalQuantityResponse(totalQuantity, cart.getVersionNo());
     }
 
 }

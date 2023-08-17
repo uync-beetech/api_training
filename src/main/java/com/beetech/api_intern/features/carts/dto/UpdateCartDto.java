@@ -11,4 +11,5 @@ public class UpdateCartDto {
     private String token;
     private Long id;
     private Long quantity;
+    private Long versionNo;
 }

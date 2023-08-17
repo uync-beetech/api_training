@@ -1,6 +1,6 @@
-package com.beetech.api_intern.features.carts.cartdetails;
+package com.beetech.api_intern.features.orders.orderdetail;
 
-import com.beetech.api_intern.features.carts.Cart;
+import com.beetech.api_intern.features.orders.Order;
 import com.beetech.api_intern.features.products.Product;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,26 +12,27 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "cart_detail")
-@Getter
+@Table(name = "order_detail")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class CartDetail implements Serializable {
+@AllArgsConstructor
+@Getter
+public class OrderDetail implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @Setter
     private Long id;
 
-    @Column
+
+    @Column(name = "quantity")
     @Setter
     private Long quantity;
 
     @Column(name = "price")
+    @Setter
     private Double price;
 
     @Column(name = "total_price")
@@ -39,9 +40,8 @@ public class CartDetail implements Serializable {
     private Double totalPrice;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id", nullable = false)
-    @Setter
-    private Cart cart;
+    @JoinColumn(name = "order_id", nullable = false)
+    private Order order;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
@@ -54,17 +54,8 @@ public class CartDetail implements Serializable {
     private LocalDateTime updated;
 
     @PrePersist
-    public void calculateTotalPrice() {
-        price = product.getPrice();
-        totalPrice = price * quantity;
-    }
-
-    public void updateTotalPrice() {
-        setTotalPrice(getQuantity() * getPrice());
-    }
-
-    public void updateQuantity(Long quantity) {
-        setQuantity(quantity);
-        setTotalPrice(quantity * getPrice());
+    public void initTotalPrice() {
+        setPrice(product.getPrice());
+        setTotalPrice(getPrice() * getQuantity());
     }
 }
