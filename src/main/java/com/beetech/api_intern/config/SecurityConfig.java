@@ -84,6 +84,11 @@ public class SecurityConfig {
             requestMatcherRegistry.requestMatchers("/api/change-password").authenticated();
         });
 
+        http.authorizeHttpRequests(requestMatcherRegistry -> {
+            requestMatcherRegistry.requestMatchers("/api/products").permitAll();
+            requestMatcherRegistry.requestMatchers("/api/products/**").permitAll();
+        });
+
         // category
         http.authorizeHttpRequests(requestMatcherRegistry -> {
             requestMatcherRegistry.requestMatchers("/api/categories").permitAll();

@@ -1,5 +1,6 @@
 package com.beetech.api_intern.features.products;
 
+import com.beetech.api_intern.features.categories.Category;
 import com.beetech.api_intern.features.images.Image;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,7 +30,7 @@ public class Product implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "sku")
+    @Column(name = "sku", unique = true)
     private String sku;
 
     @Column(name = "detail_info")
@@ -47,6 +48,11 @@ public class Product implements Serializable {
     @Setter
     @Builder.Default
     private List<Image> images = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    @Setter
+    private Category category;
 
     @CreationTimestamp
     private LocalDateTime created;
