@@ -15,6 +15,5 @@ import java.util.List;
 public class FindCartInfoResponse {
     private Long id;
     private Double totalPrice;
-    private Long versionNo;
     private List<CartDetailResponse> details;
 }
