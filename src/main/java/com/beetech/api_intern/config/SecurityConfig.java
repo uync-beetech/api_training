@@ -87,6 +87,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(requestMatcherRegistry -> {
             requestMatcherRegistry.requestMatchers("/api/products").permitAll();
             requestMatcherRegistry.requestMatchers("/api/products/**").permitAll();
+            requestMatcherRegistry.requestMatchers("/api/create-product").hasAuthority(RoleEnum.ADMIN.toString());
         });
 
         // category

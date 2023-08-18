@@ -1,10 +1,7 @@
 package com.beetech.api_intern.features.images;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -18,6 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "image")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Image implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -35,7 +33,7 @@ public class Image implements Serializable {
     @Getter
     private String name;
 
-    @Column(name = "thumbnail_flag", columnDefinition = "TINYINT default 1")
+    @Column(name = "thumbnail_flag", columnDefinition = "TINYINT default 0")
     @Builder.Default
     private boolean thumbnail = false;
 

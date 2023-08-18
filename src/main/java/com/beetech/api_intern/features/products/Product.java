@@ -19,6 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Product implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

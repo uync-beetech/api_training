@@ -1,15 +1,16 @@
 package com.beetech.api_intern.features.products;
 
-import com.beetech.api_intern.features.products.dto.FindAllDto;
-import com.beetech.api_intern.features.products.dto.FindAllResponse;
-import com.beetech.api_intern.features.products.dto.ProductDetailDto;
-import com.beetech.api_intern.features.products.dto.ProductDto;
+import com.beetech.api_intern.features.products.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -40,5 +41,28 @@ public class ProductController {
     public ResponseEntity<ProductDetailDto> findOne(@PathVariable("sku") String sku) {
         ProductDetailDto data = modelMapper.map(productService.findOne(sku), ProductDetailDto.class);
         return ResponseEntity.ok(data);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @PostMapping(value = "create-product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Object> createProduct(
+            @RequestParam("sku") String sku,
+            @RequestParam("name") String name,
+            @RequestParam("detailInfo") String detailInfo,
+            @RequestParam("price") Double price,
+            @RequestParam("categoryId") Long categoryId,
+            @RequestPart("detailImage") List<MultipartFile> detailImage,
+            @RequestPart("thumbnail") MultipartFile thumbnail
+    ) {
+        productService.createProduct(CreateProductDto.builder()
+                .name(name)
+                .sku(sku)
+                .price(price)
+                .categoryId(categoryId)
+                .detailInfo(detailInfo)
+                .detailImage(detailImage)
+                .thumbnail(thumbnail)
+                .build());
+        return ResponseEntity.ok().build();
     }
 }
