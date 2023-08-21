@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The type Product service.
@@ -34,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findOne(String sku) {
-        return productRepository.findBySku(sku).orElseThrow(ProductNotFoundException::getInstance);
+        return productRepository.findBySkuAndDeletedIsFalse(sku).orElseThrow(ProductNotFoundException::getInstance);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -55,5 +56,20 @@ public class ProductServiceImpl implements ProductService {
         product.setImages(images);
 
         productRepository.save(product);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void deleteById(Long id) {
+        Product product = productRepository.findByIdAndDeletedIsFalse(id)
+                .orElseThrow(ProductNotFoundException::getInstance);
+        product.setOldSku(product.getSku());
+        product.setSku(null);
+        product.setDeleted(true);
+        List<Image> images = product.getImages();
+        product.setImages(new ArrayList<>());
+        productRepository.save(product);
+
+        imageService.deleteImages(images);
     }
 }

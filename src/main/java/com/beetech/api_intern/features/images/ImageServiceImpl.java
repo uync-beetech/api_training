@@ -35,4 +35,11 @@ public class ImageServiceImpl implements ImageService {
         imageRepository.saveAll(imageList);
         return new ArrayList<>(imageList);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void deleteImages(List<Image> images) {
+        storageService.deleteListFile(images.stream().map(Image::getPath).toList());
+        imageRepository.deleteAll(images);
+    }
 }

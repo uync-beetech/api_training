@@ -31,14 +31,24 @@ public class Product implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "sku", unique = true)
+    @Column(name = "sku")
+    @Setter
     private String sku;
+
+    @Column(name = "old_sku")
+    @Setter
+    private String oldSku;
 
     @Column(name = "detail_info")
     private String detailInfo;
 
     @Column(name = "price")
     private Double price;
+
+    @Column(name = "delete_flag", columnDefinition = "TINYINT(3) Default 0")
+    @Setter
+    @Builder.Default
+    private boolean deleted = false;
 
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(

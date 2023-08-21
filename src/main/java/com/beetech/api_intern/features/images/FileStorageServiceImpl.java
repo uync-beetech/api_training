@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -48,6 +49,24 @@ public class FileStorageServiceImpl implements FileStorageService {
             Files.copy(file.getInputStream(), this.root.resolve(newFileName));
             return newFileName;
         } catch (IOException e) {
+            throw new ServerErrorException("Server error: ", e);
+        }
+    }
+
+    @Override
+    public void deleteListFile(List<String> fileNames) {
+        fileNames.forEach(this::deleteFile);
+    }
+
+    @Override
+    public void deleteFile(String fileName) {
+        try {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Delete image: {}", fileName);
+            }
+            Path path = root.resolve(fileName);
+            Files.deleteIfExists(path);
+        } catch (Exception e) {
             throw new ServerErrorException("Server error: ", e);
         }
     }

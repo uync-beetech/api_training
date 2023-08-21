@@ -8,4 +8,5 @@ public interface ProductService {
     Page<Product> findAll(FindAllDto dto, Integer size, Integer page);
     Product findOne(String sku);
     void createProduct(CreateProductDto dto);
+    void deleteById(Long id);
 }

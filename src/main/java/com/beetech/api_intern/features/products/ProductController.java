@@ -65,4 +65,10 @@ public class ProductController {
                 .build());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("delete-product")
+    public ResponseEntity<Object> deleteProduct(@Valid @RequestBody DeleteProductDto dto) {
+        productService.deleteById(dto.getId());
+        return ResponseEntity.ok().build();
+    }
 }

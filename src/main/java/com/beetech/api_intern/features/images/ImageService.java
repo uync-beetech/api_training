@@ -10,4 +10,5 @@ public interface ImageService {
 
     Image saveThumbnail(MultipartFile thumbnailImage);
     ArrayList<Image> saveListImage(List<MultipartFile> images);
+    void deleteImages(List<Image> images);
 }

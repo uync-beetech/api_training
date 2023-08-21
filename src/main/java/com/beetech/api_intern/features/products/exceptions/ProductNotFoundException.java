@@ -22,7 +22,7 @@ public class ProductNotFoundException extends EntityNotFoundException {
      *
      * @return the instance
      */
-    public static ProductNotFoundException getInstance() {
+    public static synchronized ProductNotFoundException getInstance() {
         if (instance == null) {
             instance = new ProductNotFoundException("Product not found!");
         }

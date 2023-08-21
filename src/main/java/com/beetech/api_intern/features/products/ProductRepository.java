@@ -11,8 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Query("SELECT p from Product p where p.category.id = :categoryId and ((p.name like %:searchKey%) or (p.sku like %:searchKey%))")
+    @Query("SELECT p from Product p where p.category.id = :categoryId and ((p.name like %:searchKey%) or (p.sku like %:searchKey%)) and (p.deleted = false)")
     Page<Product> findByCategoryIdAndSearchKey(@Param("categoryId") Long categoryId, @Param("searchKey") String searchKey, Pageable pageable);
 
-    Optional<Product> findBySku(String sku);
+    Optional<Product> findBySkuAndDeletedIsFalse(String sku);
+    Optional<Product> findByIdAndDeletedIsFalse(Long id);
 }
