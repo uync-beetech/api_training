@@ -10,10 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +34,7 @@ public class UserController {
      * @return the response entity
      */
     @PostMapping("change-password")
-    public ResponseEntity<Object> changePassword(@Valid @RequestBody ChangePasswordDto changePasswordDto) {
+    public ResponseEntity<Object> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordDto) {
         Optional<User> optionalUser = UserUtils.getAuthenticatedUser();
         assert optionalUser.isPresent();
         userService.changePassword(optionalUser.get().getId(), changePasswordDto);
@@ -65,7 +62,7 @@ public class UserController {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     @PostMapping("reset-password")
-    public ResponseEntity<Object> resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto) {
+    public ResponseEntity<Object> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordDto) {
         // find User by token
         User user = userService.findUserFromToken(resetPasswordDto.getToken());
         // reset user password
@@ -79,7 +76,7 @@ public class UserController {
     }
 
     @PostMapping("users")
-    public ResponseEntity<List<UserResponse>> findUsers(@Valid @RequestBody ListUserRequestDto dto) {
+    public ResponseEntity<List<UserResponse>> findUsers(@Valid @RequestBody ListUserRequest dto) {
         List<UserResponse> users = userService.findUser(dto).stream()
                 .map(user -> modelMapper.map(user, UserResponse.class))
                 .toList();
@@ -94,6 +91,12 @@ public class UserController {
         userService.deleteUser(user);
         authService.blockAllRefreshToken(user.getId());
         mailService.sendEmail(email, "Delete user successfully!", "Deleted");
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("lock-user/{id}")
+    public ResponseEntity<Object> lockUser(@PathVariable Long id) {
+        userService.lockUser(id);
         return ResponseEntity.ok().build();
     }
 }

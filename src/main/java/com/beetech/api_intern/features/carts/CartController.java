@@ -1,6 +1,5 @@
 package com.beetech.api_intern.features.carts;
 
-import com.beetech.api_intern.features.carts.cartdetails.CartDetailResponse;
 import com.beetech.api_intern.features.carts.cartdetails.CartDetailService;
 import com.beetech.api_intern.features.carts.dto.*;
 import jakarta.validation.Valid;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/")
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class CartController {
     private final CartDetailService cartDetailService;
 
     @PostMapping("add-cart")
-    public ResponseEntity<AddToCartResponse> addToCart(@Valid @RequestBody AddToCartDto dto) {
+    public ResponseEntity<AddToCartResponse> addToCart(@Valid @RequestBody AddToCartRequest dto) {
         Cart cart = cartService.addToCart(dto);
         Long totalQuantity = cartDetailService.getQuantityByCartId(cart.getId());
         AddToCartResponse data = AddToCartResponse.builder()
@@ -39,7 +36,7 @@ public class CartController {
 
     @PostMapping("sync-cart")
     @Transactional(propagation = Propagation.REQUIRED)
-    public ResponseEntity<Long> syncCart(@Valid @RequestBody SyncCartDto dto) {
+    public ResponseEntity<Long> syncCart(@Valid @RequestBody SyncCartRequest dto) {
         Cart synchronizedCart = cartService.syncCart(dto.getToken());
         if (synchronizedCart == null) {
             return ResponseEntity.ok().build();
@@ -51,7 +48,7 @@ public class CartController {
 
     @PostMapping("delete-cart")
     @Transactional(propagation = Propagation.REQUIRED)
-    public ResponseEntity<DeleteCartResponse> deleteCart(@Valid @RequestBody DeleteCartDto dto) {
+    public ResponseEntity<DeleteCartResponse> deleteCart(@Valid @RequestBody DeleteCartRequest dto) {
         Cart deletedCart = cartService.deleteCart(dto);
         DeleteCartResponse data = new DeleteCartResponse(0L);
         if (deletedCart != null) {
@@ -64,7 +61,7 @@ public class CartController {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @PostMapping("update-cart")
-    public ResponseEntity<UpdateCartResponse> updateCart(@Valid @RequestBody UpdateCartDto dto) {
+    public ResponseEntity<UpdateCartResponse> updateCart(@Valid @RequestBody UpdateCartRequest dto) {
         UpdateCartResponse data = new UpdateCartResponse(0L);
         Cart updatedCart = cartService.updateCart(dto);
         if (updatedCart != null) {
@@ -74,14 +71,14 @@ public class CartController {
     }
 
     @PostMapping("cart-info")
-    public ResponseEntity<FindCartInfoResponse> findCartInfo(@Valid @RequestBody FindCartInfoDto dto) {
+    public ResponseEntity<FindCartInfoResponse> findCartInfo(@Valid @RequestBody FindCartInfoRequest dto) {
         var data = cartService.findCartInfo(dto);
 
         return ResponseEntity.ok(data);
     }
 
     @PostMapping("cart-quantity")
-    public ResponseEntity<FindTotalQuantityResponse> findTotalQuantity(@Valid @RequestBody FindTotalQuantityDto dto) {
+    public ResponseEntity<FindTotalQuantityResponse> findTotalQuantity(@Valid @RequestBody FindTotalQuantityRequest dto) {
         var data = cartService.findTotalQuantity(dto.getToken());
         return ResponseEntity.ok(data);
     }

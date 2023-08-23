@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindAllOrderDto {
+public class FindAllOrderRequest {
     private String username;
 
     private Long orderId;

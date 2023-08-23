@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface ImageService {
-    Image createImage(MultipartFile file, boolean isThumbnail);
+    Image createImage(MultipartFile file, String sku, boolean isThumbnail);
 
-    Image saveThumbnail(MultipartFile thumbnailImage);
-    ArrayList<Image> saveListImage(List<MultipartFile> images);
-    void deleteImages(List<Image> images);
+    Image saveThumbnail(MultipartFile thumbnailImage, String directory);
+    ArrayList<Image> saveListImage(List<MultipartFile> images, String directory);
+    void deleteImages(List<Image> images, String directory);
 }

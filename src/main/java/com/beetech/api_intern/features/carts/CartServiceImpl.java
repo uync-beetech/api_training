@@ -48,7 +48,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart addToCart(AddToCartDto dto) {
+    public Cart addToCart(AddToCartRequest dto) {
         Optional<User> optionalUser = UserUtils.getAuthenticatedUser();
         Cart cart;
         // if user not authenticated
@@ -140,31 +140,36 @@ public class CartServiceImpl implements CartService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Cart deleteCart(DeleteCartDto dto) {
+    public Cart deleteCart(DeleteCartRequest dto) {
         Cart cart = findCartByUserOrToken(dto.getToken()).orElseThrow(CartNotFoundException::getInstance);
 
+        // if clearCart = 1, delete cart
         if (dto.getClearCart() == 1) {
             cartRepository.delete(cart);
             cart = null;
-        } else if (dto.getClearCart() == 0) {
-            Optional<CartDetail> optionalCartDetail = cartDetailRepository.findByIdAndCartId(dto.getId(), cart.getId());
-            if (optionalCartDetail.isPresent()) {
-                CartDetail cartDetail = optionalCartDetail.get();
-                cartRepository.updateTotalPriceById(cart.getTotalPrice() - cartDetail.getTotalPrice(), cart.getId());
+        } else
+            // if clearCart = 0, delete cartDetail
+            if (dto.getClearCart() == 0) {
+                // find cartDetail by cartDetailId and cartId
+                Optional<CartDetail> optionalCartDetail = cartDetailRepository.findByIdAndCartId(dto.getId(), cart.getId());
+                // if cart detail is existed
+                if (optionalCartDetail.isPresent()) {
+                    CartDetail cartDetail = optionalCartDetail.get();
+                    cartRepository.updateTotalPriceById(cart.getTotalPrice() - cartDetail.getTotalPrice(), cart.getId());
 
-                // update version no
-                cartRepository.updateVersionNo(cart.getId());
+                    // update version no
+                    cartRepository.updateVersionNo(cart.getId());
 
-                // delete cart detail
-                cartDetailRepository.delete(cartDetail);
+                    // delete cart detail
+                    cartDetailRepository.delete(cartDetail);
+                }
             }
-        }
         return cart;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Cart updateCart(UpdateCartDto dto) {
+    public Cart updateCart(UpdateCartRequest dto) {
         Cart cart = findCartByUserOrToken(dto.getToken()).orElseThrow(CartNotFoundException::getInstance);
         Optional<CartDetail> optionalCartDetail = cartDetailRepository.findByIdAndCartId(dto.getId(), cart.getId());
         if (optionalCartDetail.isPresent()) {
@@ -185,7 +190,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public FindCartInfoResponse findCartInfo(FindCartInfoDto dto) {
+    public FindCartInfoResponse findCartInfo(FindCartInfoRequest dto) {
         Cart cart = findCartByUserOrToken(dto.getToken()).orElseThrow(CartNotFoundException::getInstance);
 
         List<CartDetailResponse> details = cart.getCartDetails().stream().map(CartDetailResponse::new).toList();

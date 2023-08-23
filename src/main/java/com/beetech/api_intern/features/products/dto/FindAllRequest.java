@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class FindAllDto {
+public class FindAllRequest {
     private String searchKey;
     private Long categoryId;
 }
