@@ -117,6 +117,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(requestMatcherRegistry -> {
             requestMatcherRegistry.requestMatchers("/api/orders").authenticated();
             requestMatcherRegistry.requestMatchers("/api/create-order").authenticated();
+            requestMatcherRegistry.requestMatchers("/api/update-order").authenticated();
         });
 
         http.authorizeHttpRequests(requestMatcherRegistry -> {
