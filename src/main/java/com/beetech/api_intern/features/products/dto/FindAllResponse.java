@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FindAllResponse {
-    private List<ProductDto> products;
+    private List<ProductResponse> products;
     private Integer totalPages;
     private Integer pageNumber;
 }

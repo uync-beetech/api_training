@@ -82,18 +82,21 @@ public class SecurityConfig {
             requestMatcherRegistry.requestMatchers("/api/reset-password").permitAll();
             requestMatcherRegistry.requestMatchers("/api/users").hasAuthority(RoleEnum.ADMIN.toString());
             requestMatcherRegistry.requestMatchers("/api/change-password").authenticated();
+            requestMatcherRegistry.requestMatchers("/api/lock-user/**").hasAuthority(RoleEnum.ADMIN.toString());
         });
 
         http.authorizeHttpRequests(requestMatcherRegistry -> {
             requestMatcherRegistry.requestMatchers("/api/products").permitAll();
             requestMatcherRegistry.requestMatchers("/api/products/**").permitAll();
-            requestMatcherRegistry.requestMatchers("/api/create-product").hasAuthority(RoleEnum.ADMIN.toString());
+            requestMatcherRegistry.requestMatchers("/api/add-product").hasAuthority(RoleEnum.ADMIN.toString());
             requestMatcherRegistry.requestMatchers("/api/delete-product").hasAuthority(RoleEnum.ADMIN.toString());
         });
 
         // category
         http.authorizeHttpRequests(requestMatcherRegistry -> {
             requestMatcherRegistry.requestMatchers("/api/categories").permitAll();
+            requestMatcherRegistry.requestMatchers("/api/create-category**").hasAuthority(RoleEnum.ADMIN.toString());
+            requestMatcherRegistry.requestMatchers("/api/update-category**").hasAuthority(RoleEnum.ADMIN.toString());
             requestMatcherRegistry.requestMatchers("/api/delete-category**").hasAuthority(RoleEnum.ADMIN.toString());
         });
 

@@ -1,7 +1,7 @@
 package com.beetech.api_intern.features.user;
 
-import com.beetech.api_intern.features.user.dto.ChangePasswordDto;
-import com.beetech.api_intern.features.user.dto.ListUserRequestDto;
+import com.beetech.api_intern.features.user.dto.ChangePasswordRequest;
+import com.beetech.api_intern.features.user.dto.ListUserRequest;
 import com.beetech.api_intern.security.dto.RegisterDto;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
-    List<User> findUser(ListUserRequestDto dto);
+    List<User> findUser(ListUserRequest dto);
     void register(RegisterDto registerDto);
     void deleteUser(User user);
 
@@ -22,10 +22,11 @@ public interface UserService extends UserDetailsService {
     void deleteUserById(Long userId);
 
     User findById(Long userId);
-    void changePassword(Long userId, ChangePasswordDto changePasswordDto);
+    void changePassword(Long userId, ChangePasswordRequest changePasswordDto);
 
     String resetPassword(User user);
 
     String requestPassword(String email);
     User findUserFromToken(String token);
+    void lockUser(Long userId);
 }

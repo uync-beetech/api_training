@@ -1,9 +1,9 @@
 package com.beetech.api_intern.features.orders;
 
-import com.beetech.api_intern.features.orders.dto.CreateOrderDto;
+import com.beetech.api_intern.features.orders.dto.CreateOrderRequest;
 import com.beetech.api_intern.features.orders.dto.CreateOrderResponse;
-import com.beetech.api_intern.features.orders.dto.FindAllOrderDto;
-import com.beetech.api_intern.features.orders.dto.OrderDto;
+import com.beetech.api_intern.features.orders.dto.FindAllOrderRequest;
+import com.beetech.api_intern.features.orders.dto.OrderResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +23,16 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("orders")
-    public ResponseEntity<List<OrderDto>> findOrder(@Valid @RequestBody FindAllOrderDto dto) {
-        List<OrderDto> data = orderService.findAllOrder(dto)
-                .stream().map(OrderDto::new)
+    public ResponseEntity<List<OrderResponse>> findOrder(@Valid @RequestBody FindAllOrderRequest dto) {
+        List<OrderResponse> data = orderService.findAllOrder(dto)
+                .stream().map(OrderResponse::new)
                 .toList();
         return ResponseEntity.ok(data);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @PostMapping("create-order")
-    public ResponseEntity<CreateOrderResponse> createOrder(@Valid @RequestBody CreateOrderDto dto) {
+    public ResponseEntity<CreateOrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest dto) {
         Order order = orderService.createOrder(dto);
         return ResponseEntity.ok(new CreateOrderResponse(order.getDisplayId(), order.getTotalPrice()));
     }

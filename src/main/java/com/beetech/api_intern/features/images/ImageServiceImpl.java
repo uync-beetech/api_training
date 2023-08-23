@@ -17,29 +17,36 @@ public class ImageServiceImpl implements ImageService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Image createImage(MultipartFile file, boolean isThumbnail) {
-        String imagePath = storageService.save(file);
-        return Image.builder().path(imagePath).name(file.getOriginalFilename()).thumbnail(isThumbnail).build();
+    public Image createImage(MultipartFile file, String sku, boolean isThumbnail) {
+        String imagePath = storageService.save(file, sku);
+        return Image.builder()
+                .path(imagePath)
+                .name(file.getOriginalFilename())
+                .thumbnail(isThumbnail)
+                .build();
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Image saveThumbnail(MultipartFile thumbnailImage) {
-        return imageRepository.save(createImage(thumbnailImage, true));
+    public Image saveThumbnail(MultipartFile thumbnailImage, String directory) {
+        return imageRepository.save(createImage(thumbnailImage, directory, true));
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public ArrayList<Image> saveListImage(List<MultipartFile> images) {
-        List<Image> imageList = images.stream().map(image -> createImage(image, false)).toList();
+    public ArrayList<Image> saveListImage(List<MultipartFile> images, String directory) {
+        // create list image from list multipart file
+        List<Image> imageList = images.stream().map(image -> createImage(image, directory, false)).toList();
+        // save list image
         imageRepository.saveAll(imageList);
+
         return new ArrayList<>(imageList);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public void deleteImages(List<Image> images) {
-        storageService.deleteListFile(images.stream().map(Image::getPath).toList());
+    public void deleteImages(List<Image> images, String directory) {
+        storageService.deleteDirectory(directory);
         imageRepository.deleteAll(images);
     }
 }

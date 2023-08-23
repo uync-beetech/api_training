@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDetailDto {
+public class OrderDetailResponse {
     private Long id;
     private Long productId;
     private String productName;
@@ -20,7 +20,7 @@ public class OrderDetailDto {
     private Double price;
     private Double totalPrice;
 
-    public OrderDetailDto(OrderDetail orderDetail) {
+    public OrderDetailResponse(OrderDetail orderDetail) {
         setId(orderDetail.getId());
         Product product = orderDetail.getProduct();
         setProductId(product.getId());

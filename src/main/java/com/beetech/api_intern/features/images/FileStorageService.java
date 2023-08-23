@@ -2,13 +2,13 @@ package com.beetech.api_intern.features.images;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 public interface FileStorageService {
-    void init();
 
-    String save(MultipartFile file);
+    String save(MultipartFile file, String directory);
 
-    void deleteListFile(List<String> fileNames);
-    void deleteFile(String fileName);
+
+    void deleteDirectory(String name);
+
+
+    void createDirectory(String name);
 }

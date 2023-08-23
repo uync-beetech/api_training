@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListUserRequestDto {
+public class ListUserRequest {
     private String userName;
     @Email(message = "loginId must be email")
     private String loginId;

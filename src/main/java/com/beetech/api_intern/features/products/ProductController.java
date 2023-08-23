@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,52 +21,28 @@ public class ProductController {
     private final ModelMapper modelMapper;
 
     @PostMapping("products")
-    public ResponseEntity<FindAllResponse> findAll(
-            @Valid @RequestBody FindAllDto dto,
-            @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "10") Integer size
-    ) {
+    public ResponseEntity<FindAllResponse> findAll(@Valid @RequestBody FindAllRequest dto, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
         Page<Product> productPage = productService.findAll(dto, size, page);
-        List<ProductDto> products = productPage.getContent().stream().map(product -> modelMapper.map(product, ProductDto.class)).toList();
-        var data = FindAllResponse.builder()
-                .products(products)
-                .pageNumber(productPage.getNumber())
-                .totalPages(productPage.getTotalPages())
-                .build();
+        List<ProductResponse> products = productPage.getContent().stream().map(product -> modelMapper.map(product, ProductResponse.class)).toList();
+        var data = FindAllResponse.builder().products(products).pageNumber(productPage.getNumber()).totalPages(productPage.getTotalPages()).build();
         return ResponseEntity.ok(data);
     }
 
     @GetMapping("products/{sku}")
-    public ResponseEntity<ProductDetailDto> findOne(@PathVariable("sku") String sku) {
-        ProductDetailDto data = modelMapper.map(productService.findOne(sku), ProductDetailDto.class);
+    public ResponseEntity<ProductDetailResponse> findOne(@PathVariable("sku") String sku) {
+        ProductDetailResponse data = modelMapper.map(productService.findOne(sku), ProductDetailResponse.class);
         return ResponseEntity.ok(data);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @PostMapping(value = "create-product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> createProduct(
-            @RequestParam("sku") String sku,
-            @RequestParam("name") String name,
-            @RequestParam("detailInfo") String detailInfo,
-            @RequestParam("price") Double price,
-            @RequestParam("categoryId") Long categoryId,
-            @RequestPart("detailImage") List<MultipartFile> detailImage,
-            @RequestPart("thumbnail") MultipartFile thumbnail
-    ) {
-        productService.createProduct(CreateProductDto.builder()
-                .name(name)
-                .sku(sku)
-                .price(price)
-                .categoryId(categoryId)
-                .detailInfo(detailInfo)
-                .detailImage(detailImage)
-                .thumbnail(thumbnail)
-                .build());
+    public ResponseEntity<Object> createProduct(@Valid @ModelAttribute CreateProductRequest createProductRequest) {
+        productService.createProduct(createProductRequest);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("delete-product")
-    public ResponseEntity<Object> deleteProduct(@Valid @RequestBody DeleteProductDto dto) {
+    public ResponseEntity<Object> deleteProduct(@Valid @RequestBody DeleteProductRequest dto) {
         productService.deleteById(dto.getId());
         return ResponseEntity.ok().build();
     }

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindAllDistrictDto {
+public class FindAllDistrictRequest {
     private Integer cityId;
 }

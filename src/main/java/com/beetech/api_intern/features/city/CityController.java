@@ -1,6 +1,6 @@
 package com.beetech.api_intern.features.city;
 
-import com.beetech.api_intern.features.city.dto.CityDto;
+import com.beetech.api_intern.features.city.dto.CityResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +26,8 @@ public class CityController {
      * @return the response entity
      */
     @GetMapping("cities")
-    public ResponseEntity<List<CityDto>> findAll() {
-        List<CityDto> cities = cityService.findAll().stream().map(city -> modelMapper.map(city, CityDto.class)).toList();
+    public ResponseEntity<List<CityResponse>> findAll() {
+        List<CityResponse> cities = cityService.findAll().stream().map(city -> modelMapper.map(city, CityResponse.class)).toList();
         return ResponseEntity.ok(cities);
     }
 }
