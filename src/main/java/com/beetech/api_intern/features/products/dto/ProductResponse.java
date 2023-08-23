@@ -1,17 +1,19 @@
 package com.beetech.api_intern.features.products.dto;
 
 import com.beetech.api_intern.features.images.Image;
+import com.beetech.api_intern.features.images.dto.ImageResponse;
 import com.beetech.api_intern.features.products.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto {
+public class ProductResponse {
     private Long id;
     private String name;
     private String sku;
@@ -20,7 +22,7 @@ public class ProductDto {
     private String imagePath;
     private String imageName;
 
-    public ProductDto(Product product) {
+    public ProductResponse(Product product) {
         setId(product.getId());
         setName(product.getName());
         setSku(product.getSku());
@@ -34,4 +36,6 @@ public class ProductDto {
             setImageName(image.getName());
         }
     }
+
+    private List<ImageResponse> images;
 }

@@ -11,9 +11,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 @Entity
@@ -32,6 +30,7 @@ public class Category implements Serializable {
 
     @Column(name = "name")
     @Getter
+    @Setter
     private String name;
 
 
@@ -43,7 +42,7 @@ public class Category implements Serializable {
     )
     @Setter
     @Builder.Default
-    private Set<Image> images = new HashSet<>();
+    private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "category")
     @Builder.Default
@@ -56,4 +55,8 @@ public class Category implements Serializable {
     @UpdateTimestamp
     @Getter
     private LocalDateTime updated;
+
+    public String getImageDirectory() {
+        return "CAT_" + getId();
+    }
 }

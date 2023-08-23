@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UpdateOrderDto {
+public class UpdateOrderRequest {
     private Long id;
     @NotBlank
     @NotNull

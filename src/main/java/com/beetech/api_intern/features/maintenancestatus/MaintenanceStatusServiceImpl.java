@@ -1,6 +1,5 @@
 package com.beetech.api_intern.features.maintenancestatus;
 
-import com.beetech.api_intern.common.exceptions.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

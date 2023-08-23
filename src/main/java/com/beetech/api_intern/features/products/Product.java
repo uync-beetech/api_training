@@ -20,6 +20,7 @@ import java.util.Optional;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Product implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -31,8 +32,13 @@ public class Product implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "sku", unique = true)
+    @Column(name = "sku")
+    @Setter
     private String sku;
+
+    @Column(name = "old_sku")
+    @Setter
+    private String oldSku;
 
     @Column(name = "detail_info")
     private String detailInfo;
@@ -41,6 +47,7 @@ public class Product implements Serializable {
     private Double price;
 
     @Column(name = "delete_flag", columnDefinition = "TINYINT(3) Default 0")
+    @Setter
     @Builder.Default
     private boolean deleted = false;
 

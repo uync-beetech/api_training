@@ -20,24 +20,24 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("orders")
-    public ResponseEntity<List<OrderDto>> findOrder(@Valid @RequestBody FindAllOrderDto dto) {
-        List<OrderDto> data = orderService.findAllOrder(dto)
-                .stream().map(OrderDto::new)
+    public ResponseEntity<List<OrderResponse>> findOrder(@Valid @RequestBody FindAllOrderRequest dto) {
+        List<OrderResponse> data = orderService.findAllOrder(dto)
+                .stream().map(OrderResponse::new)
                 .toList();
         return ResponseEntity.ok(data);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @PostMapping("create-order")
-    public ResponseEntity<CreateOrderResponse> createOrder(@Valid @RequestBody CreateOrderDto dto) {
+    public ResponseEntity<CreateOrderResponse> createOrder(@Valid @RequestBody CreateOrderRequest dto) {
         Order order = orderService.createOrder(dto);
         return ResponseEntity.ok(new CreateOrderResponse(order.getDisplayId(), order.getTotalPrice()));
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @PostMapping("update-order")
-    public ResponseEntity<Object> updateOrder(@Valid @RequestBody UpdateOrderDto dto) {
-        orderService.updateOrder(dto);
+    public ResponseEntity<Object> updateOrder(@Valid @RequestBody UpdateOrderRequest request) {
+        orderService.updateOrder(request);
         return ResponseEntity.ok().build();
     }
 }

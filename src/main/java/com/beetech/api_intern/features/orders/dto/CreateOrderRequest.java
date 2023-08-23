@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateOrderDto {
+public class CreateOrderRequest {
     private String phoneNumber;
     private String address;
     private Integer cityId;

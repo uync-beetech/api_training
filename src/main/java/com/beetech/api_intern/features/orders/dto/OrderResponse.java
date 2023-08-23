@@ -2,8 +2,7 @@ package com.beetech.api_intern.features.orders.dto;
 
 import com.beetech.api_intern.common.utils.DateTimeFormatterUtils;
 import com.beetech.api_intern.features.orders.Order;
-import com.beetech.api_intern.features.orders.orderdetail.OrderDetail;
-import com.beetech.api_intern.features.orders.orderdetail.dto.OrderDetailDto;
+import com.beetech.api_intern.features.orders.orderdetail.dto.OrderDetailResponse;
 import com.beetech.api_intern.features.orders.ordershippingdetail.OrderShippingDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class OrderDto {
+public class OrderResponse {
     private Long id;
     private String displayId;
     private String username;
@@ -24,9 +23,9 @@ public class OrderDto {
     private String shippingAddress;
     private String shippingDistrict;
     private String shippingCity;
-    private List<OrderDetailDto> details;
+    private List<OrderDetailResponse> details;
 
-    public OrderDto(Order order) {
+    public OrderResponse(Order order) {
         setId(order.getId());
         setDisplayId(order.getDisplayId());
         setUsername(order.getUser().getUsername());
@@ -40,6 +39,6 @@ public class OrderDto {
 
         setTotalPrice(order.getTotalPrice());
 
-        setDetails(order.getOrderDetails().stream().map(OrderDetailDto::new).toList());
+        setDetails(order.getOrderDetails().stream().map(OrderDetailResponse::new).toList());
     }
 }

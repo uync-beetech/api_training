@@ -69,6 +69,10 @@ public class User implements UserDetails, Serializable {
     @OneToOne(mappedBy = "user")
     private Cart cart;
 
+    @Column(name = "status", columnDefinition = "Integer Default 0")
+    @Setter
+    private Integer status = 0;
+
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     @Setter
@@ -88,6 +92,7 @@ public class User implements UserDetails, Serializable {
     @Setter
     @Builder.Default
     @OneToMany(mappedBy = "user")
+    @ToString.Exclude
     private List<Order> orders = new ArrayList<>();
 
     public void addRole(Role role) {

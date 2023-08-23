@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ChangePasswordDto {
+public class ChangePasswordRequest {
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,32}$",
             message = "Old password must be between 8 and 32 characters, including letters, numbers, and uppercase letters."

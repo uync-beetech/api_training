@@ -1,7 +1,7 @@
 package com.beetech.api_intern.features.district;
 
-import com.beetech.api_intern.features.district.dto.DistrictDto;
-import com.beetech.api_intern.features.district.dto.FindAllDistrictDto;
+import com.beetech.api_intern.features.district.dto.DistrictResponse;
+import com.beetech.api_intern.features.district.dto.FindAllDistrictRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +29,10 @@ public class DistrictController {
      * @return the response entity
      */
     @PostMapping("districts")
-    public ResponseEntity<List<DistrictDto>> findAllByCityId(@RequestBody FindAllDistrictDto dto) {
-        List<DistrictDto> districts = districtService.findAll(dto.getCityId())
+    public ResponseEntity<List<DistrictResponse>> findAllByCityId(@RequestBody FindAllDistrictRequest dto) {
+        List<DistrictResponse> districts = districtService.findAll(dto.getCityId())
                 .stream()
-                .map(district -> modelMapper.map(district, DistrictDto.class))
+                .map(district -> modelMapper.map(district, DistrictResponse.class))
                 .toList();
         return ResponseEntity.ok(districts);
     }
