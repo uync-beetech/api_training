@@ -5,6 +5,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class UnauthorizedException extends ResponseStatusException {
     private static UnauthorizedException instance = null;
+
     public UnauthorizedException(String message) {
         super(HttpStatus.UNAUTHORIZED, message);
     }
@@ -13,9 +14,9 @@ public class UnauthorizedException extends ResponseStatusException {
         super(HttpStatus.UNAUTHORIZED, message, cause);
     }
 
-    public static UnauthorizedException getInstance() {
+    public static synchronized UnauthorizedException getInstance() {
         if (instance == null) {
-            instance = new UnauthorizedException("Unauthorized");
+            instance = new UnauthorizedException("Invalid token");
         }
         return instance;
     }

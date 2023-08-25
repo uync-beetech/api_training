@@ -51,6 +51,15 @@ public class Product implements Serializable {
     @Builder.Default
     private boolean deleted = false;
 
+    @Column(name = "view_count", columnDefinition = "BIGINT Default 0")
+    @Setter
+    @Builder.Default
+    private Long viewCount = 0L;
+
+    @Version
+    @Column(name = "version", columnDefinition = "BIGINT Default 1")
+    private Long version = 1L;
+
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_image",
@@ -74,5 +83,9 @@ public class Product implements Serializable {
 
     public Optional<Image> getThumbnailImage() {
         return getImages().stream().filter(Image::isThumbnail).findFirst();
+    }
+
+    public void plusView() {
+        setViewCount(getViewCount() + 1);
     }
 }

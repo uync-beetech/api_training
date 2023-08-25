@@ -35,15 +35,23 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByCategoryIdAndSearchKey(dto.getCategoryId(), dto.getSearchKey(), pageable);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Product findOne(String sku) {
-        return productRepository.findBySkuAndDeletedIsFalse(sku).orElseThrow(ProductNotFoundException::getInstance);
+        Product product = productRepository.findBySkuAndDeletedIsFalse(sku).orElseThrow(ProductNotFoundException::getInstance);
+
+        // plus product view
+        product.plusView();
+        // save product
+        productRepository.save(product);
+
+        return product;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void createProduct(CreateProductRequest dto) {
-        if (productRepository.existsBySku(dto.getSku())) {
+        if (Boolean.TRUE.equals(productRepository.existsBySku(dto.getSku()))) {
             throw new BadRequestException("sku already exist");
         }
         // create product from request data

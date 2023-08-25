@@ -92,6 +92,11 @@ public class SecurityConfig {
             requestMatcherRegistry.requestMatchers("/api/delete-product").hasAuthority(RoleEnum.ADMIN.toString());
         });
 
+        http.authorizeHttpRequests(requestMatcherRegistry -> {
+            requestMatcherRegistry.requestMatchers("/api/add-favorite-product/**").authenticated();
+            requestMatcherRegistry.requestMatchers("/api/remove-favorite-product/**").authenticated();
+        });
+
         // category
         http.authorizeHttpRequests(requestMatcherRegistry -> {
             requestMatcherRegistry.requestMatchers("/api/categories").permitAll();
