@@ -7,6 +7,8 @@ import com.beetech.api_intern.features.carts.cartdetails.CartDetailRepository;
 import com.beetech.api_intern.features.carts.cartdetails.CartDetailResponse;
 import com.beetech.api_intern.features.carts.dto.*;
 import com.beetech.api_intern.features.carts.exceptions.CartNotFoundException;
+import com.beetech.api_intern.features.numaddtocart.NumberAddToCart;
+import com.beetech.api_intern.features.numaddtocart.NumberAddToCartRepository;
 import com.beetech.api_intern.features.products.Product;
 import com.beetech.api_intern.features.products.ProductRepository;
 import com.beetech.api_intern.features.products.exceptions.ProductNotFoundException;
@@ -31,6 +33,7 @@ public class CartServiceImpl implements CartService {
     private final CartDetailRepository cartDetailRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final NumberAddToCartRepository numberAddToCartRepository;
 
     private Optional<Cart> findCartByUserOrToken(String token) {
         Optional<User> optionalUser = UserUtils.getAuthenticatedUser();
@@ -55,7 +58,9 @@ public class CartServiceImpl implements CartService {
         if (optionalUser.isPresent()) {
             User user = userRepository.findById(optionalUser.get().getId()).orElseThrow(UserNotFoundException::getInstance);
             cart = user.getCart();
+            // check if user not has a cart yet
             if (cart == null) {
+                // create new cart
                 cart = Cart.builder().user(user).build();
                 cartRepository.save(cart);
             }
@@ -66,18 +71,38 @@ public class CartServiceImpl implements CartService {
             cart = cartRepository.findByToken(dto.getToken()).orElseThrow(CartNotFoundException::getInstance);
         }
 
+        // find product by id
         Product product = productRepository.findById(dto.getProductId()).orElseThrow(ProductNotFoundException::getInstance);
+        // find cart detail contain this product
         Optional<CartDetail> optionalCartDetail = cartDetailRepository.findByCartIdAndProductId(cart.getId(), dto.getProductId());
         CartDetail cartDetail;
+        // If there is already a cartDetail containing this product
         if (optionalCartDetail.isPresent()) {
             cartDetail = optionalCartDetail.get();
+            // update quantity
             cartDetail.updateQuantity(cartDetail.getQuantity() + dto.getQuantity());
             cart.plusOne();
             cartDetailRepository.save(cartDetail);
         } else {
+            // If there is no cartDetail containing this product, create new cartDetail
             cartDetail = CartDetail.builder().cart(cart).product(product).quantity(dto.getQuantity()).price(product.getPrice()).totalPrice(product.getPrice() * dto.getQuantity()).build();
             cartDetailRepository.save(cartDetail);
         }
+
+        // Check if the cart add-to-cart statistics for this product exist.
+        var optionalNumberAddToCart = numberAddToCartRepository.findByProductId(product.getId());
+        NumberAddToCart numberAddToCart;
+        // if exist
+        if (optionalNumberAddToCart.isPresent()) {
+            numberAddToCart = optionalNumberAddToCart.get();
+            // update count
+            numberAddToCart.plus();
+        } else {
+            // create new number add to cart
+            numberAddToCart = NumberAddToCart.builder().product(product).build();
+        }
+        // save to database
+        numberAddToCartRepository.save(numberAddToCart);
 
         cart.addDetail(cartDetail);
         cartRepository.save(cart);

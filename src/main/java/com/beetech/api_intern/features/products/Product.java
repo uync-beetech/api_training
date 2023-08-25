@@ -2,6 +2,7 @@ package com.beetech.api_intern.features.products;
 
 import com.beetech.api_intern.features.categories.Category;
 import com.beetech.api_intern.features.images.Image;
+import com.beetech.api_intern.features.numaddtocart.NumberAddToCart;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -74,6 +75,10 @@ public class Product implements Serializable {
     @JoinColumn(name = "category_id")
     @Setter
     private Category category;
+
+    @OneToOne(mappedBy = "product")
+    @Setter
+    private NumberAddToCart numberAddToCart;
 
     @CreationTimestamp
     private LocalDateTime created;
