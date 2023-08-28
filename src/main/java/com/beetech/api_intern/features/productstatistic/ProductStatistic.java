@@ -38,6 +38,10 @@ public class ProductStatistic implements Serializable {
     @Builder.Default
     private Long totalTransactions = 0L;
 
+    @Column(name = "total_sales", columnDefinition = "BIGINT Default 0")
+    @Builder.Default
+    private Long totalSales = 0L;
+
     @Version
     @Column(name = "version", columnDefinition = "BIGINT Default 1")
     @Builder.Default
@@ -60,5 +64,9 @@ public class ProductStatistic implements Serializable {
 
     public void plusNumberAddToCart() {
         setNumberAddToCarts(getNumberAddToCarts() + 1);
+    }
+
+    public void plusTotalSales(Long quantity) {
+        setTotalSales(getTotalSales() + quantity);
     }
 }
