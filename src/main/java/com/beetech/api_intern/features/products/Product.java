@@ -2,7 +2,7 @@ package com.beetech.api_intern.features.products;
 
 import com.beetech.api_intern.features.categories.Category;
 import com.beetech.api_intern.features.images.Image;
-import com.beetech.api_intern.features.numaddtocart.NumberAddToCart;
+import com.beetech.api_intern.features.productstatistic.ProductStatistic;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -52,15 +52,6 @@ public class Product implements Serializable {
     @Builder.Default
     private boolean deleted = false;
 
-    @Column(name = "view_count", columnDefinition = "BIGINT Default 0")
-    @Setter
-    @Builder.Default
-    private Long viewCount = 0L;
-
-    @Version
-    @Column(name = "version", columnDefinition = "BIGINT Default 1")
-    private Long version = 1L;
-
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_image",
@@ -78,7 +69,7 @@ public class Product implements Serializable {
 
     @OneToOne(mappedBy = "product")
     @Setter
-    private NumberAddToCart numberAddToCart;
+    private ProductStatistic productStatistic;
 
     @CreationTimestamp
     private LocalDateTime created;
@@ -90,7 +81,4 @@ public class Product implements Serializable {
         return getImages().stream().filter(Image::isThumbnail).findFirst();
     }
 
-    public void plusView() {
-        setViewCount(getViewCount() + 1);
-    }
 }

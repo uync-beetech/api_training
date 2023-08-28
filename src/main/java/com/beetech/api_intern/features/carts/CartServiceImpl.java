@@ -7,11 +7,12 @@ import com.beetech.api_intern.features.carts.cartdetails.CartDetailRepository;
 import com.beetech.api_intern.features.carts.cartdetails.CartDetailResponse;
 import com.beetech.api_intern.features.carts.dto.*;
 import com.beetech.api_intern.features.carts.exceptions.CartNotFoundException;
-import com.beetech.api_intern.features.numaddtocart.NumberAddToCart;
 import com.beetech.api_intern.features.numaddtocart.NumberAddToCartRepository;
 import com.beetech.api_intern.features.products.Product;
 import com.beetech.api_intern.features.products.ProductRepository;
 import com.beetech.api_intern.features.products.exceptions.ProductNotFoundException;
+import com.beetech.api_intern.features.productstatistic.ProductStatistic;
+import com.beetech.api_intern.features.productstatistic.ProductStatisticRepository;
 import com.beetech.api_intern.features.user.User;
 import com.beetech.api_intern.features.user.UserRepository;
 import com.beetech.api_intern.features.user.exceptions.UserNotFoundException;
@@ -34,6 +35,7 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final NumberAddToCartRepository numberAddToCartRepository;
+    private final ProductStatisticRepository productStatisticRepository;
 
     private Optional<Cart> findCartByUserOrToken(String token) {
         Optional<User> optionalUser = UserUtils.getAuthenticatedUser();
@@ -89,20 +91,14 @@ public class CartServiceImpl implements CartService {
             cartDetailRepository.save(cartDetail);
         }
 
-        // Check if the cart add-to-cart statistics for this product exist.
-        var optionalNumberAddToCart = numberAddToCartRepository.findByProductId(product.getId());
-        NumberAddToCart numberAddToCart;
-        // if exist
-        if (optionalNumberAddToCart.isPresent()) {
-            numberAddToCart = optionalNumberAddToCart.get();
-            // update count
-            numberAddToCart.plus();
-        } else {
-            // create new number add to cart
-            numberAddToCart = NumberAddToCart.builder().product(product).build();
-        }
+        // find productStatistic based by product. If it doesn't exist, create a new record.
+        ProductStatistic productStatistic = productStatisticRepository.findByProductId(product.getId())
+                .orElse(ProductStatistic.builder().product(product).build());
+        // update number add to cart
+        productStatistic.plusNumberAddToCart();
         // save to database
-        numberAddToCartRepository.save(numberAddToCart);
+        productStatisticRepository.save(productStatistic);
+
 
         cart.addDetail(cartDetail);
         cartRepository.save(cart);
