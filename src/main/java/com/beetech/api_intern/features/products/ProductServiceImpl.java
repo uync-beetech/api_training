@@ -7,6 +7,8 @@ import com.beetech.api_intern.features.images.ImageService;
 import com.beetech.api_intern.features.products.dto.CreateProductRequest;
 import com.beetech.api_intern.features.products.dto.FindAllRequest;
 import com.beetech.api_intern.features.products.exceptions.ProductNotFoundException;
+import com.beetech.api_intern.features.productstatistic.ProductStatistic;
+import com.beetech.api_intern.features.productstatistic.ProductStatisticRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ImageService imageService;
+    private final ProductStatisticRepository productStatisticRepository;
 
     @Override
     public Page<Product> findAll(FindAllRequest dto, Integer size, Integer page) {
@@ -35,15 +38,29 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByCategoryIdAndSearchKey(dto.getCategoryId(), dto.getSearchKey(), pageable);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Product findOne(String sku) {
-        return productRepository.findBySkuAndDeletedIsFalse(sku).orElseThrow(ProductNotFoundException::getInstance);
+        Product product = productRepository.findBySkuAndDeletedIsFalse(sku).orElseThrow(ProductNotFoundException::getInstance);
+
+        // find productStatistic based by product. If it doesn't exist, create a new record.
+        ProductStatistic productStatistic = productStatisticRepository.findByProductId(product.getId())
+                .orElse(ProductStatistic.builder().product(product).build());
+        // update product view
+        productStatistic.plusView();
+        // save to database
+        productStatisticRepository.save(productStatistic);
+
+        // save product
+        productRepository.save(product);
+
+        return product;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void createProduct(CreateProductRequest dto) {
-        if (productRepository.existsBySku(dto.getSku())) {
+        if (Boolean.TRUE.equals(productRepository.existsBySku(dto.getSku()))) {
             throw new BadRequestException("sku already exist");
         }
         // create product from request data

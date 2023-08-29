@@ -2,6 +2,7 @@ package com.beetech.api_intern.features.products;
 
 import com.beetech.api_intern.features.categories.Category;
 import com.beetech.api_intern.features.images.Image;
+import com.beetech.api_intern.features.productstatistic.ProductStatistic;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -66,6 +67,10 @@ public class Product implements Serializable {
     @Setter
     private Category category;
 
+    @OneToOne(mappedBy = "product")
+    @Setter
+    private ProductStatistic productStatistic;
+
     @CreationTimestamp
     private LocalDateTime created;
 
@@ -75,4 +80,5 @@ public class Product implements Serializable {
     public Optional<Image> getThumbnailImage() {
         return getImages().stream().filter(Image::isThumbnail).findFirst();
     }
+
 }
