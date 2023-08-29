@@ -110,7 +110,11 @@ public class OrderServiceImpl implements OrderService {
             // find productStatistic, if not exist -> create new record
             ProductStatistic productStatistic = productStatisticRepository.findByProductId(product.getId())
                     .orElse(ProductStatistic.builder().product(product).build());
+            // update total transaction of this product
             productStatistic.plusTotalTransaction();
+            // update total sales
+            productStatistic.plusTotalSales(orderDetail.getQuantity());
+            // save to database
             productStatisticRepository.save(productStatistic);
         });
 
