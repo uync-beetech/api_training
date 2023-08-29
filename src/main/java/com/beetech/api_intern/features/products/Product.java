@@ -2,7 +2,7 @@ package com.beetech.api_intern.features.products;
 
 import com.beetech.api_intern.features.categories.Category;
 import com.beetech.api_intern.features.images.Image;
-import com.beetech.api_intern.features.productstatistic.ProductStatistic;
+import com.beetech.api_intern.features.products.productstatistic.ProductStatistic;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

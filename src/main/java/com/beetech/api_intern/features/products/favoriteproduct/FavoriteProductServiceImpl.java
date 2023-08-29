@@ -40,7 +40,6 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         if (!favoriteProduct.isAdded()) {
             // update added status is false
             favoriteProduct.setAdded(true);
-            favoriteProduct.plusAdded();
             favoriteProductRepository.save(favoriteProduct);
         }
     }
@@ -66,7 +65,6 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
             // set added to false
             favoriteProduct.setAdded(false);
             // plus removedCount
-            favoriteProduct.plusRemoved();
             // save to database
             favoriteProductRepository.save(favoriteProduct);
         }

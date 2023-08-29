@@ -1,4 +1,4 @@
-package com.beetech.api_intern.features.productstatistic;
+package com.beetech.api_intern.features.products.productstatistic;
 
 import com.beetech.api_intern.features.products.Product;
 import jakarta.persistence.*;
