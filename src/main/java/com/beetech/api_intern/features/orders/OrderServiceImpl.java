@@ -17,6 +17,9 @@ import com.beetech.api_intern.features.orders.orderdetail.OrderDetail;
 import com.beetech.api_intern.features.orders.orderdetail.OrderDetailRepository;
 import com.beetech.api_intern.features.orders.ordershippingdetail.OrderShippingDetail;
 import com.beetech.api_intern.features.orders.ordershippingdetail.OrderShippingDetailRepository;
+import com.beetech.api_intern.features.products.Product;
+import com.beetech.api_intern.features.productstatistic.ProductStatistic;
+import com.beetech.api_intern.features.productstatistic.ProductStatisticRepository;
 import com.beetech.api_intern.features.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
     private final CityRepository cityRepository;
     private final DistrictRepository districtRepository;
     private final OrderShippingDetailRepository orderShippingDetailRepository;
+    private final ProductStatisticRepository productStatisticRepository;
 
     @Override
     public List<Order> findAllOrder(FindAllOrderRequest dto) {
@@ -95,8 +99,24 @@ public class OrderServiceImpl implements OrderService {
                 .quantity(cartDetail.getQuantity())
                 .build()).toList();
 
+
         // save all order detail
         orderDetailRepository.saveAll(orderDetails);
+
+        // update the number of times the product has been added to the cart.
+        orderDetails.forEach(orderDetail -> {
+            // get product from orderDetail
+            Product product = orderDetail.getProduct();
+            // find productStatistic, if not exist -> create new record
+            ProductStatistic productStatistic = productStatisticRepository.findByProductId(product.getId())
+                    .orElse(ProductStatistic.builder().product(product).build());
+            // update total transaction of this product
+            productStatistic.plusTotalTransaction();
+            // update total sales
+            productStatistic.plusTotalSales(orderDetail.getQuantity());
+            // save to database
+            productStatisticRepository.save(productStatistic);
+        });
 
         // find district by district's id and city's id
         District district = districtRepository.findByIdAndCityId(dto.getDistrictId(), dto.getCityId())
