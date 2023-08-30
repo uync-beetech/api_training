@@ -1,6 +1,7 @@
-package com.beetech.api_intern.features.numaddtocart;
+package com.beetech.api_intern.features.productstatistic.favoriteproduct;
 
 import com.beetech.api_intern.features.products.Product;
+import com.beetech.api_intern.features.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -10,14 +11,14 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "number_add_to_cart")
-@Getter
-@Setter
+@Table(name = "favorite_product")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class NumberAddToCart implements Serializable {
+@Getter
+@Setter
+public class FavoriteProduct implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -26,23 +27,20 @@ public class NumberAddToCart implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "count", columnDefinition = "BIGINT Default 1")
-    @Builder.Default
-    private Long count = 1L;
+    @ManyToOne
+    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "version", columnDefinition = "BIGINT Default 1")
-    @Builder.Default
-    @Version
-    private Long version = 1L;
-
-    @OneToOne
-    @JoinColumn(name = "product_id")
+    @ManyToOne
+    @PrimaryKeyJoinColumn
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @Column(name = "added", columnDefinition = "TINYINT(3) DEFAULT 1")
+    @Builder.Default
+    private boolean added = true;
 
     @UpdateTimestamp
     private LocalDateTime updated;
-
-    public void plus() {
-        setCount(getCount() + 1);
-    }
 }
