@@ -23,6 +23,11 @@ public class DateTimeFormatterUtils {
         return date.format(formatter);
     }
 
+    public static LocalDate convertStringToLocalDate(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        return LocalDate.parse(date, formatter);
+    }
+
     public static LocalDate convertBirthdayString(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         return LocalDate.parse(date, formatter);

@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 @RequiredArgsConstructor
 public class UserDataLoader implements CommandLineRunner {
@@ -33,6 +35,7 @@ public class UserDataLoader implements CommandLineRunner {
                     .loginId("admin@gmail.com")
                     .username(username)
                     .password(passwordEncoder.encode("Admin123"))
+                    .birthDay(LocalDate.of(2001, 10, 1))
                     .build();
             user.addRole(this.roleRepository.findRoleByName(RoleEnum.ADMIN));
             user.addRole(this.roleRepository.findRoleByName(RoleEnum.NORMAL));

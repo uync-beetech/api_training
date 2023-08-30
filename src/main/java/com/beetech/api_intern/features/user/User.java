@@ -1,5 +1,6 @@
 package com.beetech.api_intern.features.user;
 
+import com.beetech.api_intern.common.utils.LocalDateToStringConverter;
 import com.beetech.api_intern.features.carts.Cart;
 import com.beetech.api_intern.features.changepasswordtoken.ChangePasswordToken;
 import com.beetech.api_intern.features.orders.Order;
@@ -49,6 +50,7 @@ public class User implements UserDetails, Serializable {
     private String password;
 
     @Column(name = "birth_day")
+    @Convert(converter = LocalDateToStringConverter.class)
     private LocalDate birthDay;
 
     @Getter

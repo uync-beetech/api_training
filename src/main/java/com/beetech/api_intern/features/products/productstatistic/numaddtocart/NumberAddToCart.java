@@ -1,4 +1,4 @@
-package com.beetech.api_intern.features.products.productstatistic.view;
+package com.beetech.api_intern.features.products.productstatistic.numaddtocart;
 
 import com.beetech.api_intern.features.products.productstatistic.ProductStatisticKey;
 import jakarta.persistence.Column;
@@ -11,27 +11,27 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "product_view")
+@Table(name = "number_add_to_cart")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class ProductView implements Serializable {
+@ToString
+public class NumberAddToCart implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     private ProductStatisticKey id;
 
-    @Column(name = "view_count", columnDefinition = "BIGINT Default 0")
+    @Column(name = "add_to_cart_count", columnDefinition = "BIGINT Default 0")
     @Builder.Default
-    private Long viewCount = 0L;
+    private Long addToCartCount = 0L;
 
-    @Column(name = "update_date", nullable = false, insertable = false, updatable = false)
-    private String updateDate;
-
-    @Column(name = "product_id", nullable = false, insertable = false, updatable = false)
+    @Column(name = "product_id", nullable = false, updatable = false, insertable = false)
     private Long productId;
 
+    @Column(name = "update_date", nullable = false, updatable = false, insertable = false)
+    private String updateDate;
 }

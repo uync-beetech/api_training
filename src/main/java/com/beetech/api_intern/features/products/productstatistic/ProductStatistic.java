@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class ProductStatistic implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -53,10 +52,6 @@ public class ProductStatistic implements Serializable {
 
     @UpdateTimestamp
     private LocalDateTime updated;
-
-    public void plusView() {
-        setView(getView() + 1);
-    }
 
     public void plusTotalTransaction() {
         setTotalTransactions(getTotalTransactions() + 1);
