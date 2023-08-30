@@ -2,6 +2,7 @@ package com.beetech.api_intern.features.productstatistic.view;
 
 import com.beetech.api_intern.common.utils.DateTimeFormatterUtils;
 import com.beetech.api_intern.features.products.Product;
+import com.beetech.api_intern.features.productstatistic.ProductStatisticKey;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,8 @@ public class ProductViewServiceImpl implements ProductViewService {
                 Optional<ProductView> optionalLastProductView = productViewRepository.findTopByProductIdOrderByDateDesc(product.getId());
                 // create new record for this date
                 // default count = 0
-                ProductViewKey productViewKey = new ProductViewKey(product.getId(), stringToday);
-                ProductView productView = ProductView.builder().id(productViewKey).build();
+                ProductStatisticKey productStatisticKey = new ProductStatisticKey(product.getId(), stringToday);
+                ProductView productView = ProductView.builder().id(productStatisticKey).build();
                 // If the previous record does not exist
                 if (optionalLastProductView.isEmpty()) {
                     // Increment the view count by one
@@ -46,7 +47,7 @@ public class ProductViewServiceImpl implements ProductViewService {
                 } else {
                     productView.setViewCount(optionalLastProductView.get().getViewCount() + 1);
                 }
-                productViewRepository.createProductView(product.getId(), stringToday, productView.getViewCount());
+                productViewRepository.createProductView(product.getId(), productView.getViewCount(), stringToday);
                 LOGGER.info("create product view success");
                 return;
             } catch (Exception e) {

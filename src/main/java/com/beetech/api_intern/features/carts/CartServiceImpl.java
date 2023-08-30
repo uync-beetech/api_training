@@ -7,12 +7,12 @@ import com.beetech.api_intern.features.carts.cartdetails.CartDetailRepository;
 import com.beetech.api_intern.features.carts.cartdetails.CartDetailResponse;
 import com.beetech.api_intern.features.carts.dto.*;
 import com.beetech.api_intern.features.carts.exceptions.CartNotFoundException;
-import com.beetech.api_intern.features.numaddtocart.NumberAddToCartRepository;
 import com.beetech.api_intern.features.products.Product;
 import com.beetech.api_intern.features.products.ProductRepository;
 import com.beetech.api_intern.features.products.exceptions.ProductNotFoundException;
-import com.beetech.api_intern.features.products.productstatistic.ProductStatistic;
-import com.beetech.api_intern.features.products.productstatistic.ProductStatisticRepository;
+import com.beetech.api_intern.features.productstatistic.ProductStatistic;
+import com.beetech.api_intern.features.productstatistic.ProductStatisticRepository;
+import com.beetech.api_intern.features.productstatistic.numaddtocart.NumberAddToCartService;
 import com.beetech.api_intern.features.user.User;
 import com.beetech.api_intern.features.user.UserRepository;
 import com.beetech.api_intern.features.user.exceptions.UserNotFoundException;
@@ -34,7 +34,7 @@ public class CartServiceImpl implements CartService {
     private final CartDetailRepository cartDetailRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private final NumberAddToCartRepository numberAddToCartRepository;
+    private final NumberAddToCartService numberAddToCartService;
     private final ProductStatisticRepository productStatisticRepository;
 
     private Optional<Cart> findCartByUserOrToken(String token) {
@@ -53,6 +53,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public Cart addToCart(AddToCartRequest dto) {
         Optional<User> optionalUser = UserUtils.getAuthenticatedUser();
         Cart cart;
@@ -102,6 +103,8 @@ public class CartServiceImpl implements CartService {
 
         cart.addDetail(cartDetail);
         cartRepository.save(cart);
+
+        numberAddToCartService.update(product);
 
         return cart;
     }

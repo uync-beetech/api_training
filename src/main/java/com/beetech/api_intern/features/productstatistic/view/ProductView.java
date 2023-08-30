@@ -1,5 +1,6 @@
 package com.beetech.api_intern.features.productstatistic.view;
 
+import com.beetech.api_intern.features.productstatistic.ProductStatisticKey;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -23,7 +24,7 @@ public class ProductView implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
-    private ProductViewKey id;
+    private ProductStatisticKey id;
 
     @Column(name = "view_count", columnDefinition = "BIGINT Default 0")
     @Builder.Default

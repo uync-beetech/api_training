@@ -33,15 +33,15 @@ public class NumberAddToCartServiceImpl implements NumberAddToCartService {
 
         // Create a loop for creating new or updating with 2 iterations.
         for (int i = 0; i < 2; i++) {
-            // Try creating a new record for the added favorite count.
+            // Try creating a new record for the added count.
             try {
                 // find last previous record
-                var optionalAddedFavoriteProduct = numberAddToCartRepository.findLast(product.getId());
+                var optionalAdded = numberAddToCartRepository.findLast(product.getId());
 
                 Long addedCount = 0L;
                 // If the previous record does exist
-                if (optionalAddedFavoriteProduct.isPresent()) {
-                    addedCount = optionalAddedFavoriteProduct.get().getAddToCartCount();
+                if (optionalAdded.isPresent()) {
+                    addedCount = optionalAdded.get().getAddToCartCount();
                 }
                 addedCount++;
                 numberAddToCartRepository.create(product.getId(), stringToday, addedCount);

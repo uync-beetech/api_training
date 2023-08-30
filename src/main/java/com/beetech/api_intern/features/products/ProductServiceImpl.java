@@ -7,8 +7,7 @@ import com.beetech.api_intern.features.images.ImageService;
 import com.beetech.api_intern.features.products.dto.CreateProductRequest;
 import com.beetech.api_intern.features.products.dto.FindAllRequest;
 import com.beetech.api_intern.features.products.exceptions.ProductNotFoundException;
-import com.beetech.api_intern.features.products.productstatistic.ProductStatisticRepository;
-import com.beetech.api_intern.features.products.productstatistic.view.ProductViewService;
+import com.beetech.api_intern.features.productstatistic.view.ProductViewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +28,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ImageService imageService;
-    private final ProductStatisticRepository productStatisticRepository;
     private final ProductViewService productViewService;
 
     @Override
