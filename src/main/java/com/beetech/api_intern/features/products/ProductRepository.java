@@ -25,12 +25,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "p.id as id, " +
             "p.sku as sku, " +
             "p.name as name, " +
-            "case when (COALESCE(pvEnd.viewCount, 0) - COALESCE(pvStart.viewCount, 0)) > 0 then (COALESCE(pvEnd.viewCount, 0) - COALESCE(pvStart.viewCount, 0)) else 0 end as view, " +
-            "case when (COALESCE(afpEnd.addedCount, 0) - COALESCE(afpStart.addedCount, 0)) > 0 then (COALESCE(afpEnd.addedCount, 0) - COALESCE(afpStart.addedCount, 0)) else 0 end as addedFavorite, " +
-            "case when (COALESCE(rfpEnd.removedCount, 0) - COALESCE(rfpStart.removedCount, 0)) > 0 then (COALESCE(rfpEnd.removedCount, 0) - COALESCE(rfpStart.removedCount, 0)) else 0 end as removedFavorite, " +
-            "case when (COALESCE(atcEnd.addToCartCount, 0) - COALESCE(atcStart.addToCartCount, 0)) > 0 then (COALESCE(atcEnd.addToCartCount, 0) - COALESCE(atcStart.addToCartCount, 0)) else 0 end as numberAddToCarts, " +
-            "case when (COALESCE(ttEnd.transactions, 0) - COALESCE(ttStart.transactions, 0)) > 0 then (COALESCE(ttEnd.transactions, 0) - COALESCE(ttStart.transactions, 0)) else 0 end as totalTransactions, " +
-            "case when (COALESCE(tsEnd.saleCount, 0) - COALESCE(tsStart.saleCount, 0)) > 0 then (COALESCE(tsEnd.saleCount, 0) - COALESCE(tsStart.saleCount, 0)) else 0 end as totalSales, " +
+            "COALESCE(pvEnd.viewCount, 0) - COALESCE(pvStart.viewCount, 0) as view, " +
+            "COALESCE(afpEnd.addedCount, 0) - COALESCE(afpStart.addedCount, 0) as addedFavorite, " +
+            "COALESCE(rfpEnd.removedCount, 0) - COALESCE(rfpStart.removedCount, 0) as removedFavorite, " +
+            "COALESCE(atcEnd.addToCartCount, 0) - COALESCE(atcStart.addToCartCount, 0) as numberAddToCarts, " +
+            "COALESCE(ttEnd.transactions, 0) - COALESCE(ttStart.transactions, 0) as totalTransactions, " +
+            "COALESCE(tsEnd.saleCount, 0) - COALESCE(tsStart.saleCount, 0) as totalSales, " +
             "CASE " +
             "        WHEN COALESCE(pvEnd.viewCount, 0) - COALESCE(pvStart.viewCount, 0) > 0 " +
             "           THEN ABS(CAST((COALESCE(ttEnd.transactions, 0) - COALESCE(ttStart.transactions, 0)) as DOUBLE )) / COALESCE(pvEnd.viewCount, 0) - COALESCE(pvStart.viewCount, 0) " +
@@ -49,7 +49,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "   ON pvEnd.productId = p.id and pvEnd.updateDate = " +
             "(" +
             "SELECT MAX(pv.updateDate) from ProductView pv " +
-            "WHERE pv.productId = p.id AND pv.updateDate >= :start_date AND pv.updateDate <= :end_date" +
+            "WHERE pv.productId = p.id AND pv.updateDate <= :end_date" +
             ")" +
 
             // left join added favorite product
@@ -63,7 +63,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "   ON afpEnd.productId = p.id AND afpEnd.updateDate = " +
             "(" +
             "SELECT MAX(afp.updateDate) from AddedFavoriteProduct afp " +
-            "WHERE afp.productId = p.id AND afp.updateDate >= :start_date AND afp.updateDate <= :end_date" +
+            "WHERE afp.productId = p.id AND afp.updateDate <= :end_date" +
             ") " +
 
             // left join removed favorite product
@@ -77,7 +77,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "   ON rfpEnd.productId = p.id AND rfpEnd.updateDate = " +
             "(" +
             "SELECT MAX(rfp.updateDate) from RemovedFavoriteProduct rfp " +
-            "WHERE rfp.productId = p.id AND rfp.updateDate >= :start_date AND rfp.updateDate <= :end_date" +
+            "WHERE rfp.productId = p.id AND rfp.updateDate <= :end_date" +
             ") " +
 
             // left join number add to cart
@@ -91,7 +91,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "   ON atcEnd.productId = p.id AND atcEnd.updateDate = " +
             "(" +
             "SELECT MAX(ac.updateDate) from NumberAddToCart ac " +
-            "WHERE ac.productId = p.id AND ac.updateDate >= :start_date AND ac.updateDate <= :end_date " +
+            "WHERE ac.productId = p.id AND ac.updateDate <= :end_date " +
             ")" +
 
             // left join total transaction
@@ -105,7 +105,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "   ON ttEnd.productId = p.id AND ttEnd.updateDate = " +
             "(" +
             "SELECT MAX(tt.updateDate) from TotalTransaction tt " +
-            "WHERE tt.productId = p.id AND tt.updateDate >= :start_date AND tt.updateDate <= :end_date" +
+            "WHERE tt.productId = p.id AND tt.updateDate <= :end_date" +
             ") " +
 
             // left join total sales
@@ -120,7 +120,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "( " +
             "SELECT MAX(ts2.updateDate) from TotalSale ts2 " +
             "WHERE ts2.productId = p.id " +
-            "AND ts2.updateDate >= :start_date " +
             "AND ts2.updateDate <= :end_date " +
             ") " +
             // if the product has not been deleted.
