@@ -15,7 +15,7 @@ public class ProductStatisticsRequest {
     private String date;
 
     @Min(value = 1)
-    @Max(value = 53)
+    @Max(value = 5)
     private Integer week;
 
     @Min(value = 1)

@@ -90,6 +90,7 @@ public class SecurityConfig {
             requestMatcherRegistry.requestMatchers("/api/products/**").permitAll();
             requestMatcherRegistry.requestMatchers("/api/add-product").hasAuthority(RoleEnum.ADMIN.toString());
             requestMatcherRegistry.requestMatchers("/api/delete-product").hasAuthority(RoleEnum.ADMIN.toString());
+            requestMatcherRegistry.requestMatchers("/api/product-statistics**").hasAuthority(RoleEnum.ADMIN.toString());
         });
 
         http.authorizeHttpRequests(requestMatcherRegistry -> {
