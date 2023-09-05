@@ -32,7 +32,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "COALESCE(ttGroup.transaction_count, 0) as totalTransactions, " +
             "COALESCE(tsGroup.sale_count, 0) as totalSales, " +
             "IF(" +
-            "   pvGroup.view > 0, " +
+            "   pvGroup.view > 0 AND ttGroup.transaction_count > 0, " +
             "   CAST((ttGroup.transaction_count) as DOUBLE) " +
             "       / CAST((pvGroup.view) as DOUBLE), " +
             "   0" +
