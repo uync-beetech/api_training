@@ -25,105 +25,88 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "p.id as id, " +
             "p.sku as sku, " +
             "p.name as name, " +
-            "COALESCE(pvEnd.viewCount, 0) - COALESCE(pvStart.viewCount, 0) as view, " +
-            "COALESCE(afpEnd.addedCount, 0) - COALESCE(afpStart.addedCount, 0) as addedFavorite, " +
-            "COALESCE(rfpEnd.removedCount, 0) - COALESCE(rfpStart.removedCount, 0) as removedFavorite, " +
-            "COALESCE(atcEnd.addToCartCount, 0) - COALESCE(atcStart.addToCartCount, 0) as numberAddToCarts, " +
-            "COALESCE(ttEnd.transactions, 0) - COALESCE(ttStart.transactions, 0) as totalTransactions, " +
-            "COALESCE(tsEnd.saleCount, 0) - COALESCE(tsStart.saleCount, 0) as totalSales, " +
-            "CASE " +
-            "        WHEN COALESCE(pvEnd.viewCount, 0) - COALESCE(pvStart.viewCount, 0) > 0 " +
-            "           THEN ABS(CAST((COALESCE(ttEnd.transactions, 0) - COALESCE(ttStart.transactions, 0)) as DOUBLE )) / COALESCE(pvEnd.viewCount, 0) - COALESCE(pvStart.viewCount, 0) " +
-            "        ELSE 0" +
-            "END AS transactionViewRatio " +
-            "FROM Product p " +
+            "COALESCE(pvGroup.view, 0) as view, " +
+            "COALESCE(afpGroup.added_count, 0) as addedFavorite, " +
+            "COALESCE(rfpGroup.removed_count, 0) as removedFavorite, " +
+            "COALESCE(natcGroup.add_to_cart_count, 0) as numberAddToCarts, " +
+            "COALESCE(ttGroup.transaction_count, 0) as totalTransactions, " +
+            "COALESCE(tsGroup.sale_count, 0) as totalSales, " +
+            "IF(" +
+            "   pvGroup.view > 0 AND ttGroup.transaction_count > 0, " +
+            "   CAST((ttGroup.transaction_count) as DOUBLE) " +
+            "       / CAST((pvGroup.view) as DOUBLE), " +
+            "   0" +
+            ") AS transactionViewRatio " +
+            "FROM product p " +
 
             // join product view
-            "LEFT JOIN ProductView pvStart " +
-            "   ON pvStart.productId = p.id AND pvStart.updateDate = " +
-            "(" +
-            "SELECT MAX(pv.updateDate) from ProductView pv " +
-            "WHERE pv.productId = p.id AND pv.updateDate < :start_date" +
-            ")" +
-            "LEFT JOIN ProductView pvEnd " +
-            "   ON pvEnd.productId = p.id and pvEnd.updateDate = " +
-            "(" +
-            "SELECT MAX(pv.updateDate) from ProductView pv " +
-            "WHERE pv.productId = p.id AND pv.updateDate <= :end_date" +
-            ")" +
+            "LEFT JOIN ( " +
+            "   SELECT pv.product_id, " +
+            "       MAX(IF(pv.update_date <= :end_date, pv.view_count, 0)) - " +
+            "       MAX(IF(pv.update_date < :start_date, pv.view_count, 0)) as view " +
+            "   FROM product_view pv " +
+            "   WHERE pv.update_date <= :end_date " +
+            "   GROUP BY pv.product_id" +
+            ") AS pvGroup ON p.id = pvGroup.product_id " +
 
             // left join added favorite product
-            "LEFT JOIN AddedFavoriteProduct afpStart " +
-            "   ON afpStart.productId = p.id AND afpStart.updateDate =" +
-            "(" +
-            "SELECT MAX(afp.updateDate) from AddedFavoriteProduct afp " +
-            "WHERE afp.productId = p.id AND afp.updateDate < :start_date" +
-            ") " +
-            "LEFT JOIN AddedFavoriteProduct afpEnd " +
-            "   ON afpEnd.productId = p.id AND afpEnd.updateDate = " +
-            "(" +
-            "SELECT MAX(afp.updateDate) from AddedFavoriteProduct afp " +
-            "WHERE afp.productId = p.id AND afp.updateDate <= :end_date" +
-            ") " +
+            "LEFT JOIN (" +
+            "   SELECT " +
+            "       afp.product_id," +
+            "       MAX(IF(afp.update_date <= :end_date, afp.added_count, 0)) - " +
+            "       MAX(IF(afp.update_date < :start_date, afp.added_count, 0)) as added_count " +
+            "   FROM added_favorite_product afp " +
+            "   WHERE afp.update_date <= :end_date " +
+            "   GROUP BY afp.product_id " +
+            ") AS afpGroup ON afpGroup.product_id = p.id " +
 
             // left join removed favorite product
-            "LEFT JOIN RemovedFavoriteProduct rfpStart " +
-            "   ON rfpStart.productId = p.id AND rfpStart.updateDate = " +
-            "(" +
-            "SELECT MAX(rfp.updateDate) from RemovedFavoriteProduct rfp " +
-            "WHERE rfp.productId = p.id AND rfp.updateDate < :start_date" +
-            ") " +
-            "LEFT JOIN RemovedFavoriteProduct rfpEnd " +
-            "   ON rfpEnd.productId = p.id AND rfpEnd.updateDate = " +
-            "(" +
-            "SELECT MAX(rfp.updateDate) from RemovedFavoriteProduct rfp " +
-            "WHERE rfp.productId = p.id AND rfp.updateDate <= :end_date" +
-            ") " +
+            "LEFT JOIN (" +
+            "   SELECT " +
+            "       rfp.product_id, " +
+            "       MAX(IF(rfp.update_date <= :end_date, rfp.removed_count, 0)) - " +
+            "       MAX(IF(rfp.update_date < :start_date, rfp.removed_count, 0)) as removed_count " +
+            "   FROM removed_favorite_product rfp " +
+            "   WHERE rfp.update_date <= :end_date " +
+            "   GROUP BY rfp.product_id " +
+            ") AS rfpGroup on rfpGroup.product_id = p.id " +
 
             // left join number add to cart
-            "LEFT JOIN NumberAddToCart atcStart " +
-            "   ON atcStart.productId = p.id AND atcStart.updateDate = " +
-            "(" +
-            "SELECT MAX (ac.updateDate) from NumberAddToCart ac " +
-            "WHERE ac.productId = p.id AND ac.updateDate < :start_date" +
-            ") " +
-            "LEFT JOIN NumberAddToCart atcEnd " +
-            "   ON atcEnd.productId = p.id AND atcEnd.updateDate = " +
-            "(" +
-            "SELECT MAX(ac.updateDate) from NumberAddToCart ac " +
-            "WHERE ac.productId = p.id AND ac.updateDate <= :end_date " +
-            ")" +
+            "LEFT JOIN (" +
+            "   SELECT " +
+            "       natc.product_id, " +
+            "       MAX(IF(natc.update_date <= :end_date, natc.add_to_cart_count, 0)) - " +
+            "       MAX(IF(natc.update_date < :start_date, natc.add_to_cart_count, 0)) as add_to_cart_count " +
+            "   FROM number_add_to_cart natc " +
+            "   WHERE natc.update_date <= :end_date " +
+            "   GROUP BY natc.product_id" +
+            ") as natcGroup on natcGroup.product_id = p.id " +
 
             // left join total transaction
-            "LEFT JOIN TotalTransaction ttStart " +
-            "   ON ttStart.productId = p.id AND ttStart.updateDate = " +
-            "(" +
-            "SELECT MAX(tt.updateDate) from TotalTransaction tt " +
-            "WHERE tt.productId = p.id AND tt.updateDate < :start_date" +
-            ") " +
-            "LEFT JOIN TotalTransaction ttEnd " +
-            "   ON ttEnd.productId = p.id AND ttEnd.updateDate = " +
-            "(" +
-            "SELECT MAX(tt.updateDate) from TotalTransaction tt " +
-            "WHERE tt.productId = p.id AND tt.updateDate <= :end_date" +
-            ") " +
+            "LEFT JOIN (" +
+            "   SELECT " +
+            "       tt.product_id," +
+            "       MAX(IF(tt.update_date <= :end_date, tt.transactions, 0)) - " +
+            "       MAX(IF(tt.update_date < :start_date, tt.transactions, 0)) as transaction_count " +
+            "   FROM total_transaction tt " +
+            "   WHERE tt.update_date <= :end_date " +
+            "   GROUP BY tt.product_id " +
+            ") AS ttGroup ON ttGroup.product_id = p.id " +
 
             // left join total sales
-            "LEFT JOIN TotalSale tsStart " +
-            "   ON tsStart.productId = p.id AND tsStart.updateDate = " +
-            "( " +
-            "SELECT MAX(ts1.id.updateDate) from TotalSale ts1 " +
-            "WHERE ts1.productId = p.id AND ts1.updateDate < :start_date" +
-            ") " +
-            "LEFT JOIN TotalSale tsEnd " +
-            "ON tsEnd.productId = p.id AND tsEnd.updateDate = " +
-            "( " +
-            "SELECT MAX(ts2.updateDate) from TotalSale ts2 " +
-            "WHERE ts2.productId = p.id " +
-            "AND ts2.updateDate <= :end_date " +
-            ") " +
+            "LEFT JOIN (" +
+            "   SELECT " +
+            "       ts.product_id," +
+            "       MAX(IF(ts.update_date <= :end_date, ts.sale_count, 0)) - " +
+            "       MAX(IF(ts.update_date < :start_date, ts.sale_count, 0)) as sale_count " +
+            "   FROM total_sale ts " +
+            "   WHERE ts.update_date <= :end_date " +
+            "   GROUP BY ts.product_id" +
+            ") AS tsGroup ON tsGroup.product_id = p.id " +
+
             // if the product has not been deleted.
-            "WHERE p.deleted = false "
+            "WHERE p.delete_flag = 0",
+            nativeQuery = true
     )
     Page<ProductStatisticsInterface> findProductStatistics(@Param("start_date") String startDate, @Param("end_date") String endDate, Pageable pageable);
 }
