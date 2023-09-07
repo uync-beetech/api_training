@@ -18,9 +18,13 @@ public class DateTimeFormatterUtils {
         return localDate.format(formatter);
     }
 
-    public static LocalDate convertStringToLocalDate(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
+    public static String convertLocalDateToString(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        return date.format(formatter);
+    }
 
+    public static LocalDate convertStringToLocalDate(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         return LocalDate.parse(date, formatter);
     }
 

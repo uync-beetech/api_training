@@ -1,12 +1,15 @@
-package com.beetech.api_intern.features.products.favoriteproduct;
+package com.beetech.api_intern.features.products.productstatistic.favoriteproduct;
 
 import com.beetech.api_intern.common.utils.UserUtils;
 import com.beetech.api_intern.features.products.Product;
 import com.beetech.api_intern.features.products.ProductRepository;
 import com.beetech.api_intern.features.products.exceptions.ProductNotFoundException;
+import com.beetech.api_intern.features.products.productstatistic.favoriteproduct.addedfavorite.AddedFavoriteProductService;
+import com.beetech.api_intern.features.products.productstatistic.favoriteproduct.removedfavorite.RemovedFavoriteProductService;
 import com.beetech.api_intern.features.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -15,8 +18,11 @@ import java.util.Optional;
 public class FavoriteProductServiceImpl implements FavoriteProductService {
     private final FavoriteProductRepository favoriteProductRepository;
     private final ProductRepository productRepository;
+    private final AddedFavoriteProductService addedFavoriteProductService;
+    private final RemovedFavoriteProductService removedFavoriteProductService;
 
     @Override
+    @Transactional
     public void addFavoriteProduct(String sku) {
         // find product by sku
         Product product = productRepository.findBySkuAndDeletedIsFalse(sku)
@@ -33,6 +39,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
                     .product(product)
                     .build();
             favoriteProductRepository.save(favoriteProduct);
+            addedFavoriteProductService.updateCount(product);
             return;
         }
 
@@ -40,12 +47,14 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         if (!favoriteProduct.isAdded()) {
             // update added status is false
             favoriteProduct.setAdded(true);
-            favoriteProduct.plusAdded();
+            // plus added count
+            addedFavoriteProductService.updateCount(product);
             favoriteProductRepository.save(favoriteProduct);
         }
     }
 
     @Override
+    @Transactional
     public void removeFavoriteProduct(String sku) {
         // find product by sku
         Product product = productRepository.findBySkuAndDeletedIsFalse(sku)
@@ -66,7 +75,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
             // set added to false
             favoriteProduct.setAdded(false);
             // plus removedCount
-            favoriteProduct.plusRemoved();
+            removedFavoriteProductService.updateCount(product);
             // save to database
             favoriteProductRepository.save(favoriteProduct);
         }

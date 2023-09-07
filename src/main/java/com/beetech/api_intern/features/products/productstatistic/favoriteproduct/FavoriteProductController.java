@@ -1,4 +1,4 @@
-package com.beetech.api_intern.features.products.favoriteproduct;
+package com.beetech.api_intern.features.products.productstatistic.favoriteproduct;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

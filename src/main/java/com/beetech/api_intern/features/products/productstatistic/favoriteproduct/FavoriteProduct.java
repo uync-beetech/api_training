@@ -1,4 +1,4 @@
-package com.beetech.api_intern.features.products.favoriteproduct;
+package com.beetech.api_intern.features.products.productstatistic.favoriteproduct;
 
 import com.beetech.api_intern.features.products.Product;
 import com.beetech.api_intern.features.user.User;
@@ -41,22 +41,6 @@ public class FavoriteProduct implements Serializable {
     @Builder.Default
     private boolean added = true;
 
-    @Column(name = "added_count", columnDefinition = "BIGINT DEFAULT 1")
-    @Builder.Default
-    private Long addedCount = 1L;
-
-    @Column(name = "removed_count", columnDefinition = "BIGINT DEFAULT 0")
-    @Builder.Default
-    private Long removedCount = 0L;
-
     @UpdateTimestamp
     private LocalDateTime updated;
-
-    public void plusAdded() {
-        setAddedCount(getAddedCount() + 1);
-    }
-
-    public void plusRemoved() {
-        setRemovedCount(getRemovedCount() + 1);
-    }
 }
