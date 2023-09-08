@@ -6,7 +6,7 @@ import com.beetech.api_intern.features.user.UserRepository;
 import com.beetech.api_intern.security.RefreshToken;
 import com.beetech.api_intern.security.RefreshTokenRepository;
 import com.beetech.api_intern.security.dto.AuthenticationResponse;
-import com.beetech.api_intern.security.dto.LoginDto;
+import com.beetech.api_intern.security.dto.LoginRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public AuthenticationResponse login(LoginDto request) {
+    public AuthenticationResponse login(LoginRequest request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     request.getLoginId(),

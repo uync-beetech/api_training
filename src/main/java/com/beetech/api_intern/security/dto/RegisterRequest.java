@@ -8,13 +8,13 @@ import lombok.*;
 
 
 /**
- * The type Register dto.
+ * The type Register request.
  */
 @ToString
 @Data
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class RegisterDto {
+public class RegisterRequest {
     @NotBlank
     @Email(message = "loginId must be email")
     private String loginId;

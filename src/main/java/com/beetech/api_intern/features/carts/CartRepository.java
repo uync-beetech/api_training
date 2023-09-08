@@ -3,6 +3,7 @@ package com.beetech.api_intern.features.carts;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -17,7 +18,8 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     @Modifying
     @Query("UPDATE Cart c set c.versionNo = c.versionNo + 1 where c.id = :cartId")
-    void updateVersionNo(Long cartId);
+    void updateVersionNo(@Param("cartId") Long cartId);
 
     Optional<Cart> findByUserIdAndVersionNo(Long userId, Long versionNo);
+    Optional<Cart> findByTokenAndVersionNo(String token, Long versionNo);
 }

@@ -1,6 +1,5 @@
 package com.beetech.api_intern.features.orders.dto;
 
-import com.beetech.api_intern.common.utils.DateTimeFormatterUtils;
 import com.beetech.api_intern.features.orders.Order;
 import com.beetech.api_intern.features.orders.orderdetail.dto.OrderDetailResponse;
 import com.beetech.api_intern.features.orders.ordershippingdetail.OrderShippingDetail;
@@ -29,7 +28,7 @@ public class OrderResponse {
         setId(order.getId());
         setDisplayId(order.getDisplayId());
         setUsername(order.getUser().getUsername());
-        setOrderDate(DateTimeFormatterUtils.localDateToString(order.getOrderDate()));
+        setOrderDate(order.getOrderDate());
         setOrderStatus(order.getStatus());
 
         OrderShippingDetail orderShippingDetail = order.getOrderShippingDetail();

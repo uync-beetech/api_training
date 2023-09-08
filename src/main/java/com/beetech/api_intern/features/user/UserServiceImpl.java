@@ -4,7 +4,6 @@ import com.beetech.api_intern.common.exceptions.BadRequestException;
 import com.beetech.api_intern.common.exceptions.ConflictException;
 import com.beetech.api_intern.common.exceptions.EntityNotFoundException;
 import com.beetech.api_intern.common.utils.CustomPasswordEncoder;
-import com.beetech.api_intern.common.utils.DateTimeFormatterUtils;
 import com.beetech.api_intern.common.utils.StringGenerator;
 import com.beetech.api_intern.features.changepasswordtoken.ChangePasswordToken;
 import com.beetech.api_intern.features.changepasswordtoken.ChangePasswordTokenRepository;
@@ -14,7 +13,7 @@ import com.beetech.api_intern.features.role.RoleRepository;
 import com.beetech.api_intern.features.user.dto.ChangePasswordRequest;
 import com.beetech.api_intern.features.user.dto.ListUserRequest;
 import com.beetech.api_intern.features.user.exceptions.UserNotFoundException;
-import com.beetech.api_intern.security.dto.RegisterDto;
+import com.beetech.api_intern.security.dto.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -40,29 +38,27 @@ public class UserServiceImpl implements UserService {
     private final MailService mailService;
 
     @Override
-    public List<User> findUser(ListUserRequest dto) {
-        // convert from-to birthday from string format yyyyMMdd-yyyyMMdd
-        LocalDate from = DateTimeFormatterUtils.convertBirthdayString(dto.getBirthDay().split("-")[0]);
-        LocalDate to = DateTimeFormatterUtils.convertBirthdayString(dto.getBirthDay().split("-")[1]);
+    public List<User> findUser(ListUserRequest request) {
+        String[] birthDays = request.getBirthDay().split("-");
 
         // find list user was born (>= "from") and (<= "to")
-        return userRepository.findAllByBirthDayGreaterThanEqualAndBirthDayLessThanEqual(from, to);
+        return userRepository.findAllByBirthDayGreaterThanEqualAndBirthDayLessThanEqual(birthDays[0], birthDays[1]);
     }
 
     @Override
-    public void register(RegisterDto registerDto) {
+    public void register(RegisterRequest registerRequest) {
         // check user is not exist
-        boolean isExistedUser = userRepository.existsByLoginId(registerDto.getLoginId()) || userRepository.existsByUsername(registerDto.getUsername());
+        boolean isExistedUser = userRepository.existsByLoginId(registerRequest.getLoginId()) || userRepository.existsByUsername(registerRequest.getUsername());
         if (isExistedUser) {
             throw new ConflictException("Username or loginId already existed!");
         }
 
         // create user from request data
         User user = User.builder()
-                .loginId(registerDto.getLoginId())
-                .username(registerDto.getUsername())
-                .password(passwordEncoder.encode(registerDto.getPassword()))
-                .birthDay(DateTimeFormatterUtils.convertBirthdayString(registerDto.getBirthday()))
+                .loginId(registerRequest.getLoginId())
+                .username(registerRequest.getUsername())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .birthDay(registerRequest.getBirthday())
                 .build();
         // set default role normal for user
         user.addRole(roleRepository.findRoleByName(RoleEnum.NORMAL));
@@ -105,12 +101,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(Long userId, ChangePasswordRequest changePasswordDto) {
+    public void changePassword(Long userId, ChangePasswordRequest changePasswordRequest) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::getInstance);
-        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
             throw new BadRequestException("Old password is not match!");
         }
-        user.setPassword(passwordEncoder.encode(changePasswordDto.getPassword()));
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.getPassword()));
         userRepository.save(user);
     }
 

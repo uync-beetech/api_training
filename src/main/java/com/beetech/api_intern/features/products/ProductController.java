@@ -1,5 +1,6 @@
 package com.beetech.api_intern.features.products;
 
+import com.beetech.api_intern.common.responses.CommonResponseBody;
 import com.beetech.api_intern.features.products.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,8 @@ public class ProductController {
     private final ModelMapper modelMapper;
 
     @PostMapping("products")
-    public ResponseEntity<FindAllResponse> findAll(@Valid @RequestBody FindAllRequest dto, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
-        Page<Product> productPage = productService.findAll(dto, size, page);
+    public ResponseEntity<FindAllResponse> findAll(@Valid @RequestBody FindAllRequest request, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
+        Page<Product> productPage = productService.findAll(request, size, page);
         List<ProductResponse> products = productPage.getContent().stream().map(product -> modelMapper.map(product, ProductResponse.class)).toList();
         var data = FindAllResponse.builder().products(products).pageNumber(productPage.getNumber()).totalPages(productPage.getTotalPages()).build();
         return ResponseEntity.ok(data);
@@ -38,12 +39,12 @@ public class ProductController {
     @PostMapping(value = "create-product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> createProduct(@Valid @ModelAttribute CreateProductRequest createProductRequest) {
         productService.createProduct(createProductRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new CommonResponseBody<>());
     }
 
     @PostMapping("delete-product")
-    public ResponseEntity<Object> deleteProduct(@Valid @RequestBody DeleteProductRequest dto) {
-        productService.deleteById(dto.getId());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Object> deleteProduct(@Valid @RequestBody DeleteProductRequest request) {
+        productService.deleteById(request.getId());
+        return ResponseEntity.ok(new CommonResponseBody<>());
     }
 }

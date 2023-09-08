@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FindAllOrderRequest {
-    private String username;
+    private String userName;
 
     private Long orderId;
 
@@ -19,6 +19,6 @@ public class FindAllOrderRequest {
 
     private Integer status;
 
-    @Pattern(regexp = "\\b(?:0?[1-9]|[12][0-9]|3[01])/(?:0?[1-9]|1[0-2])/[0-9]{4}\\b", message = "Invalid date format")
+    @Pattern(regexp = "^(19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2]\\d|3[0-1])$", message = "Invalid date format")
     private String orderDate;
 }

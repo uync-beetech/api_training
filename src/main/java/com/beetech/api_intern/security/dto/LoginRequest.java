@@ -10,12 +10,12 @@ import lombok.ToString;
 
 
 /**
- * The type Login dto.
+ * The type Login request.
  */
 @Data
 @AllArgsConstructor
 @ToString
-public class LoginDto {
+public class LoginRequest {
     /**
      * username String
      */

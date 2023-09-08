@@ -39,5 +39,5 @@ working:
   days: "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY"
   time:
     start: "0800"
-    end: "1730"
+    end: "2100"
 

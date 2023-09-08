@@ -6,14 +6,28 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The type Add to cart request.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddToCartRequest {
+    /**
+     * the token must contain 20 chars
+     */
     @Size(min = 20, max = 20, message = "token must be 20 characters")
     private String token;
-    @Min(value = 1, message = "productId must be greater than 0")
+
+    /**
+     * the productId must be greater than or equal to 1
+     */
+    @Min(value = 1, message = "productId must be greater than or equal to 1")
     private Long productId;
-    @Min(value = 1, message = "quantity must be greater than 0")
+
+    /**
+     * the quantity must be greater than or equal to 1
+     */
+    @Min(value = 1, message = "quantity must be greater than or equal to 1")
     private Long quantity;
 }

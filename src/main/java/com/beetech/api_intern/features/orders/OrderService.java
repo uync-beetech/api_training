@@ -6,10 +6,32 @@ import com.beetech.api_intern.features.orders.dto.UpdateOrderRequest;
 
 import java.util.List;
 
+/**
+ * The interface Order service.
+ */
 public interface OrderService {
-    void updateOrder(UpdateOrderRequest dto);
+    /**
+     * Update order.
+     *
+     * @param request the request
+     */
+    void updateOrder(UpdateOrderRequest request);
 
-    List<Order> findAllOrder(FindAllOrderRequest dto);
+    /**
+     * Find all order list.
+     *
+     * @param request the request
+     * @param page    the page
+     * @param size    the size
+     * @return the list
+     */
+    List<Order> findAllOrder(FindAllOrderRequest request, Integer page, Integer size);
 
-    Order createOrder(CreateOrderRequest dto);
+    /**
+     * Create order .
+     *
+     * @param request the request
+     * @return the order
+     */
+    Order createOrder(CreateOrderRequest request);
 }
