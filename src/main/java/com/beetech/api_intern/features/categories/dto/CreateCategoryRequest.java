@@ -1,5 +1,6 @@
 package com.beetech.api_intern.features.categories.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -14,8 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateCategoryRequest {
     @Size(max = 255, message = "name must be less than or equal to 255 characters")
-    @NotNull
+    @Size(min = 1, message = "name must be not empty")
+    @NotNull(message = "name must be not null")
+    @NotBlank(message = "name must be not blank")
     private String name;
-    @NotNull
+
+    @NotNull(message = "name must be not null")
     private List<MultipartFile> image;
 }

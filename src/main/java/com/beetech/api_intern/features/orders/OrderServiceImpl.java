@@ -2,6 +2,7 @@ package com.beetech.api_intern.features.orders;
 
 import com.beetech.api_intern.common.exceptions.BadRequestException;
 import com.beetech.api_intern.common.exceptions.EntityNotFoundException;
+import com.beetech.api_intern.common.utils.DateTimeFormatterUtils;
 import com.beetech.api_intern.common.utils.UserUtils;
 import com.beetech.api_intern.features.carts.Cart;
 import com.beetech.api_intern.features.carts.CartRepository;
@@ -39,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
     private final TotalSaleService totalSaleService;
 
     @Override
-    public List<Order> findAllOrder(FindAllOrderRequest dto) {
+    public List<Order> findAllOrder(FindAllOrderRequest request, Integer page, Integer size) {
         User user = UserUtils.getUser();
         List<Order> orders;
         if (user.isAdmin()) {
@@ -72,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Order createOrder(CreateOrderRequest dto) {
+    public Order createOrder(CreateOrderRequest request) {
         // get user authenticated
         User user = UserUtils.getUser();
         // only  normal user can order
@@ -80,13 +81,13 @@ public class OrderServiceImpl implements OrderService {
             throw new BadRequestException("admin cannot order");
         }
         // find user cart by user and version no
-        Cart cart = cartRepository.findByUserIdAndVersionNo(user.getId(), dto.getVersionNo())
+        Cart cart = cartRepository.findByUserIdAndVersionNo(user.getId(), request.getVersionNo())
                 .orElseThrow(CartNotFoundException::getInstance);
 
         // create order from user
         Order order = Order.builder()
                 .user(user)
-                .orderDate(LocalDate.now())
+                .orderDate(DateTimeFormatterUtils.convertLocalDateToString(LocalDate.now()))
                 .build();
         orderRepository.save(order);
 
@@ -102,17 +103,17 @@ public class OrderServiceImpl implements OrderService {
         orderDetailRepository.saveAll(orderDetails);
 
         // find district by district's id and city's id
-        District district = districtRepository.findByIdAndCityId(dto.getDistrictId(), dto.getCityId())
+        District district = districtRepository.findByIdAndCityId(request.getDistrictId(), request.getCityId())
                 // throw exception if district not found
                 .orElseThrow(() -> new EntityNotFoundException("District not found!"));
 
         // create order shipping detail from request data
         OrderShippingDetail orderShippingDetail = OrderShippingDetail.builder()
                 .order(order)
-                .address(dto.getAddress())
+                .address(request.getAddress())
                 .city(district.getCity())
                 .district(district)
-                .phoneNumber(dto.getPhoneNumber())
+                .phoneNumber(request.getPhoneNumber())
                 .build();
 
         // save order shipping detail to database
@@ -138,20 +139,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public void updateOrder(UpdateOrderRequest dto) {
+    public void updateOrder(UpdateOrderRequest request) {
         User user = UserUtils.getUser();
         Order order;
         if (user.isAdmin()) {
-            if (dto.getId() == null) {
+            if (request.getId() == null) {
                 throw new BadRequestException("id must be not null");
             }
-            order = orderRepository.findByIdAndDisplayId(dto.getId(), dto.getDisplayId())
+            order = orderRepository.findByIdAndDisplayId(request.getId(), request.getDisplayId())
                     .orElseThrow(OrderNotFoundException::getInstance);
         } else {
-            order = orderRepository.findByUserIdAndDisplayId(user.getId(), dto.getDisplayId())
+            order = orderRepository.findByUserIdAndDisplayId(user.getId(), request.getDisplayId())
                     .orElseThrow(OrderNotFoundException::getInstance);
         }
-        order.setStatus(dto.getStatus());
+        order.setStatus(request.getStatus());
         orderRepository.save(order);
     }
 }

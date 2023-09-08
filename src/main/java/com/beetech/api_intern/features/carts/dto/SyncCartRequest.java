@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class SyncCartRequest {
+    /**
+     * the token must contains 20 chars
+     */
     @Size(min = 20, max = 20, message = "token must contain 20 characters")
     private String token;
 }

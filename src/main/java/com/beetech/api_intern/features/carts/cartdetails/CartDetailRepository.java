@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface CartDetailRepository extends JpaRepository<CartDetail, Long> {
-    @Query("SELECT SUM(cd.quantity) FROM CartDetail cd where cd.cart.id = :cartId")
+    @Query("SELECT COALESCE(SUM(cd.quantity), 0) FROM CartDetail cd where cd.cart.id = :cartId")
     Long getQuantityByCart(Long cartId);
 
     void deleteByCartId(Long cartId);

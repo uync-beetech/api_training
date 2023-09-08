@@ -2,7 +2,7 @@ package com.beetech.api_intern.features.user;
 
 import com.beetech.api_intern.features.user.dto.ChangePasswordRequest;
 import com.beetech.api_intern.features.user.dto.ListUserRequest;
-import com.beetech.api_intern.security.dto.RegisterDto;
+import com.beetech.api_intern.security.dto.RegisterRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
-    List<User> findUser(ListUserRequest dto);
-    void register(RegisterDto registerDto);
+    List<User> findUser(ListUserRequest request);
+    void register(RegisterRequest registerRequest);
     void deleteUser(User user);
 
     @Override
@@ -22,7 +22,7 @@ public interface UserService extends UserDetailsService {
     void deleteUserById(Long userId);
 
     User findById(Long userId);
-    void changePassword(Long userId, ChangePasswordRequest changePasswordDto);
+    void changePassword(Long userId, ChangePasswordRequest changePasswordRequest);
 
     String resetPassword(User user);
 

@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.*;
 
 @Getter
@@ -49,7 +48,7 @@ public class User implements UserDetails, Serializable {
     private String password;
 
     @Column(name = "birth_day")
-    private LocalDate birthDay;
+    private String birthDay;
 
     @Getter
     @Column(name = "locked")

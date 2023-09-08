@@ -10,7 +10,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class Order implements Serializable {
     private Integer status = 1;
 
     @Column(name = "order_date")
-    private LocalDate orderDate;
+    private String orderDate;
 
     @OneToOne(mappedBy = "order")
     @Setter

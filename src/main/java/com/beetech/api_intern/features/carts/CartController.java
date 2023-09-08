@@ -1,11 +1,11 @@
 package com.beetech.api_intern.features.carts;
 
+import com.beetech.api_intern.common.exceptions.BadRequestException;
+import com.beetech.api_intern.common.responses.CommonResponseBody;
 import com.beetech.api_intern.features.carts.cartdetails.CartDetailService;
 import com.beetech.api_intern.features.carts.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,72 +14,116 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The type Cart controller.
+ */
 @RestController
-@RequestMapping("/api/")
+@RequestMapping("/api/v1/")
 @RequiredArgsConstructor
 public class CartController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CartController.class);
     private final CartService cartService;
     private final CartDetailService cartDetailService;
 
+    /**
+     * Add to cart response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping("add-cart")
-    public ResponseEntity<AddToCartResponse> addToCart(@Valid @RequestBody AddToCartRequest dto) {
-        Cart cart = cartService.addToCart(dto);
+    public ResponseEntity<CommonResponseBody<AddToCartResponse>> addToCart(@Valid @RequestBody AddToCartRequest request) {
+        Cart cart = cartService.addToCart(request);
         Long totalQuantity = cartDetailService.getQuantityByCartId(cart.getId());
         AddToCartResponse data = AddToCartResponse.builder()
                 .token(cart.getToken())
                 .totalQuantity(totalQuantity)
+                .versionNo(cart.getVersionNo())
                 .build();
-
-        return ResponseEntity.ok(data);
+        CommonResponseBody<AddToCartResponse> body = new CommonResponseBody<>(data);
+        return ResponseEntity.ok(body);
     }
 
+    /**
+     * Sync cart response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping("sync-cart")
     @Transactional(propagation = Propagation.REQUIRED)
-    public ResponseEntity<Long> syncCart(@Valid @RequestBody SyncCartRequest dto) {
-        Cart synchronizedCart = cartService.syncCart(dto.getToken());
+    public ResponseEntity<CommonResponseBody<Object>> syncCart(@Valid @RequestBody SyncCartRequest request) {
+        Cart synchronizedCart = cartService.syncCart(request.getToken());
         if (synchronizedCart == null) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(new CommonResponseBody<>());
         }
         Long totalQuantity = cartDetailService.getQuantityByCartId(synchronizedCart.getId());
+        SyncCartResponse data = new SyncCartResponse(totalQuantity);
+        CommonResponseBody<Object> body = new CommonResponseBody<>(data);
 
-        return ResponseEntity.ok(totalQuantity);
+        return ResponseEntity.ok(body);
     }
 
+    /**
+     * Delete cart response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping("delete-cart")
     @Transactional(propagation = Propagation.REQUIRED)
-    public ResponseEntity<DeleteCartResponse> deleteCart(@Valid @RequestBody DeleteCartRequest dto) {
-        Cart deletedCart = cartService.deleteCart(dto);
+    public ResponseEntity<CommonResponseBody<Object>> deleteCart(@Valid @RequestBody DeleteCartRequest request) {
+        if (request.getClearCart() == 0 && request.getDetailId() == null) {
+            throw new BadRequestException("detailId is required when clearCart with a value of 0");
+        }
+        Cart deletedCart = cartService.deleteCart(request);
         DeleteCartResponse data = new DeleteCartResponse(0L);
         if (deletedCart != null) {
             data = new DeleteCartResponse(cartDetailService.getQuantityByCartId(deletedCart.getId()));
         }
 
-        return ResponseEntity.ok(data);
+        return ResponseEntity.ok(new CommonResponseBody<>(data));
     }
 
 
+    /**
+     * Update cart response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @Transactional(propagation = Propagation.REQUIRED)
     @PostMapping("update-cart")
-    public ResponseEntity<UpdateCartResponse> updateCart(@Valid @RequestBody UpdateCartRequest dto) {
+    public ResponseEntity<CommonResponseBody<UpdateCartResponse>> updateCart(@Valid @RequestBody UpdateCartRequest request) {
         UpdateCartResponse data = new UpdateCartResponse(0L);
-        Cart updatedCart = cartService.updateCart(dto);
+        Cart updatedCart = cartService.updateCart(request);
         if (updatedCart != null) {
             data.setTotalQuantity(cartDetailService.getQuantityByCartId(updatedCart.getId()));
         }
-        return ResponseEntity.ok(data);
+        return ResponseEntity.ok(new CommonResponseBody<>(data));
     }
 
+    /**
+     * Find cart info response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping("cart-info")
-    public ResponseEntity<FindCartInfoResponse> findCartInfo(@Valid @RequestBody FindCartInfoRequest dto) {
-        var data = cartService.findCartInfo(dto);
+    public ResponseEntity<CommonResponseBody<Object>> findCartInfo(@Valid @RequestBody FindCartInfoRequest request) {
+        var data = cartService.findCartInfo(request);
 
-        return ResponseEntity.ok(data);
+        return ResponseEntity.ok(new CommonResponseBody<>(data));
     }
 
+    /**
+     * Find total quantity response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
     @PostMapping("cart-quantity")
-    public ResponseEntity<FindTotalQuantityResponse> findTotalQuantity(@Valid @RequestBody FindTotalQuantityRequest dto) {
-        var data = cartService.findTotalQuantity(dto.getToken());
-        return ResponseEntity.ok(data);
+    public ResponseEntity<CommonResponseBody<FindTotalQuantityResponse>> findTotalQuantity(@Valid @RequestBody FindTotalQuantityRequest request) {
+        var data = cartService.findTotalQuantity(request.getToken());
+        return ResponseEntity.ok(new CommonResponseBody<>(data));
     }
 }

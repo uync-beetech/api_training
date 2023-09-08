@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestPasswordDto {
+public class RequestPasswordRequest {
     @Email(message = "invalid email")
     private String email;
 }

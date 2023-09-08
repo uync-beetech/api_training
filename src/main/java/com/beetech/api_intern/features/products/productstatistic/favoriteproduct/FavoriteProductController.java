@@ -1,5 +1,6 @@
 package com.beetech.api_intern.features.products.productstatistic.favoriteproduct;
 
+import com.beetech.api_intern.common.responses.CommonResponseBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,12 +17,12 @@ public class FavoriteProductController {
     @PostMapping("/add-favorite-product/{sku}")
     public ResponseEntity<Object> addFavoriteProduct(@PathVariable String sku) {
         favoriteProductService.addFavoriteProduct(sku);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new CommonResponseBody<>());
     }
 
     @PostMapping("/remove-favorite-product/{sku}")
     public ResponseEntity<Object> removeFavoriteProduct(@PathVariable String sku) {
         favoriteProductService.removeFavoriteProduct(sku);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new CommonResponseBody<>());
     }
 }

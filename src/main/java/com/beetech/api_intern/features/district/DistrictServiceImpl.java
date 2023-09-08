@@ -15,6 +15,7 @@ public class DistrictServiceImpl implements DistrictService {
 
     @Override
     public List<District> findAll(Integer cityId) {
+        // call repo method to find all districts by cityId
         return districtRepository.findAllByCityId(cityId);
     }
 }

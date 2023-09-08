@@ -1,9 +1,12 @@
 package com.beetech.api_intern.features.carts.cartdetails;
 
+import com.beetech.api_intern.features.images.Image;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Optional;
 
 @Data
 @NoArgsConstructor
@@ -23,8 +26,15 @@ public class CartDetailResponse {
         setProductId(cartDetail.getProduct().getId());
         setQuantity(cartDetail.getQuantity());
         setPrice(cartDetail.getPrice());
-        setImageName(cartDetail.getProduct().getImages().get(0).getName());
-        setImagePath(cartDetail.getProduct().getImages().get(0).getPath());
+        Optional<Image> optionalImage = cartDetail.getProduct().getThumbnailImage();
+        if (optionalImage.isPresent()) {
+            Image image = optionalImage.get();
+            setImageName(image.getName());
+            setImagePath(image.getPath());
+        } else {
+            setImageName(null);
+            setImagePath(null);
+        }
         setTotalPrice(cartDetail.getTotalPrice());
     }
 }

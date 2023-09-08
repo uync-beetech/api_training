@@ -1,9 +1,9 @@
 package com.beetech.api_intern.security;
 
 import com.beetech.api_intern.security.dto.AuthenticationResponse;
-import com.beetech.api_intern.security.dto.LoginDto;
-import com.beetech.api_intern.security.dto.RefreshTokenDto;
-import com.beetech.api_intern.security.dto.RegisterDto;
+import com.beetech.api_intern.security.dto.LoginRequest;
+import com.beetech.api_intern.security.dto.RefreshTokenRequest;
+import com.beetech.api_intern.security.dto.RegisterRequest;
 import com.beetech.api_intern.security.service.AuthService;
 import com.beetech.api_intern.features.user.UserService;
 import jakarta.validation.Valid;
@@ -35,21 +35,38 @@ public class AuthController {
      * @return the response entity
      */
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid LoginDto request) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    /**
+     * Refresh token response entity.
+     *
+     * @param refreshTokenRequest the refresh token request
+     * @return the response entity
+     */
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenDto refreshTokenDto) {
-        return ResponseEntity.ok(authService.refreshToken(refreshTokenDto.getRefreshToken()));
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest.getRefreshToken()));
     }
 
+    /**
+     * Register response entity.
+     *
+     * @param registerRequest the register request
+     * @return the response entity
+     */
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterDto registerDto) {
-        userService.register(registerDto);
+    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest registerRequest) {
+        userService.register(registerRequest);
         return new ResponseEntity<>("register success!", HttpStatus.CREATED);
     }
 
+    /**
+     * Test string.
+     *
+     * @return the string
+     */
     @GetMapping("/test")
     public String test() {
         return "Hello world";

@@ -8,4 +8,5 @@ import lombok.Data;
 public class AddToCartResponse {
     private String token;
     private Long totalQuantity;
+    private Long versionNo;
 }

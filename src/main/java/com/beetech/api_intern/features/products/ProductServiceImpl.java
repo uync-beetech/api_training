@@ -31,10 +31,10 @@ public class ProductServiceImpl implements ProductService {
     private final ProductViewService productViewService;
 
     @Override
-    public Page<Product> findAll(FindAllRequest dto, Integer size, Integer page) {
+    public Page<Product> findAll(FindAllRequest request, Integer size, Integer page) {
         // create pageable for pagination
         Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findByCategoryIdAndSearchKey(dto.getCategoryId(), dto.getSearchKey(), pageable);
+        return productRepository.findByCategoryIdAndSearchKey(request.getCategoryId(), request.getSearchKey(), pageable);
     }
 
     @Override
@@ -49,24 +49,24 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public void createProduct(CreateProductRequest dto) {
-        if (Boolean.TRUE.equals(productRepository.existsBySku(dto.getSku()))) {
+    public void createProduct(CreateProductRequest request) {
+        if (Boolean.TRUE.equals(productRepository.existsBySku(request.getSku()))) {
             throw new BadRequestException("sku already exist");
         }
         // create product from request data
         Product product = Product.builder()
-                .category(categoryRepository.findById(dto.getCategoryId()).orElseThrow())
-                .name(dto.getName())
-                .detailInfo(dto.getDetailInfo())
-                .price(dto.getPrice())
-                .sku(dto.getSku())
+                .category(categoryRepository.findById(request.getCategoryId()).orElseThrow())
+                .name(request.getName())
+                .detailInfo(request.getDetailInfo())
+                .price(request.getPrice())
+                .sku(request.getSku())
                 .build();
         productRepository.save(product);
 
         // create and save detail images of product
-        ArrayList<Image> images = imageService.saveListImage(dto.getDetailImage(), product.getSku());
+        ArrayList<Image> images = imageService.saveListImage(request.getDetailImage(), product.getSku());
         // create and save thumbnail image
-        Image thumbnail = imageService.saveThumbnail(dto.getThumbnail(), product.getSku());
+        Image thumbnail = imageService.saveThumbnail(request.getThumbnail(), product.getSku());
         // add thumbnail to list image
         images.add(thumbnail);
         // set saved images for product
