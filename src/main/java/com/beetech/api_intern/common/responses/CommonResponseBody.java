@@ -1,5 +1,6 @@
 package com.beetech.api_intern.common.responses;
 
+import com.beetech.api_intern.common.enums.ResponseMessageEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +27,7 @@ public class CommonResponseBody<T> {
      */
     public CommonResponseBody(T data) {
         setStatus(200);
-        setMessage("OK");
+        setMessage(ResponseMessageEnum.OK.toString());
         setData(data);
     }
 
@@ -48,6 +49,6 @@ public class CommonResponseBody<T> {
      */
     public CommonResponseBody() {
         setStatus(200);
-        setMessage("OK");
+        setMessage(ResponseMessageEnum.OK.toString());
     }
 }
